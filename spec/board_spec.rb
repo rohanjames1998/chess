@@ -72,4 +72,27 @@ describe Board do
       end
     end
   end
+
+  describe "#add_white_pawns" do
+    context "When called" do
+      xit "removes all dummy elements" do
+        chess.add_white_pawns
+        result = chess[2].include?("")
+        expect(result).to eq(false)
+      end
+
+      xit "adds 8 pawns" do
+        chess.add_white_pawns
+        result = chess[2].all?(Pawn)
+        expect(result).to eq(true)
+      end
+
+      xit "all pawns are white" do
+        chess.add_white_pawns
+        result = chess[2].all? {|piece| piece.unicode = "\u2659"}
+        expect(result).to eq(true)
+      end
+    end
+  end
+
 end
