@@ -21,52 +21,52 @@ describe Board do
   describe "#add_white_pieces" do
 
     context "When called" do
-      xit "removes all dummy elements" do
+      it "removes all dummy elements" do
         chess.add_white_pieces
-        result = chess.grid[0].include?('')
+        result = chess.grid[1].include?('')
         expect(result).to eq(false)
       end
 
-      xit "adds two white rooks" do
+      it "adds two white rooks" do
         chess.add_white_pieces
-        rook1 = chess.grid[0][0]
-        rook2 = chess.grid[0][8]
+        rook1 = chess.grid[1][0]
+        rook2 = chess.grid[1][7]
         expect(rook1).to be_a(Rook)
         expect(rook2).to be_a(Rook)
         expect(rook1.unicode).to eq("\u2656")
         expect(rook2.unicode).to eq("\u2656")
       end
 
-      xit "adds two white knights" do
+      it "adds two white knights" do
         chess.add_white_pieces
-        knight1 = chess.grid[0][1]
-        knight2 = chess.grid[0][7]
+        knight1 = chess.grid[1][1]
+        knight2 = chess.grid[1][6]
         expect(knight1).to be_a(Knight)
         expect(knight2).to be_a(Knight)
         expect(knight1.unicode).to eq("\u2658")
         expect(knight2.unicode).to eq("\u2658")
       end
 
-      xit "adds two white bishops" do
+      it "adds two white bishops" do
         chess.add_white_pieces
-        bishop1 = chess.grid[0][2]
-        bishop2 = chess.grid[0][6]
+        bishop1 = chess.grid[1][2]
+        bishop2 = chess.grid[1][5]
         expect(bishop1).to be_a(Bishop)
         expect(bishop2).to be_a(Bishop)
         expect(bishop1.unicode).to eq("\u2657")
         expect(bishop2.unicode).to eq("\u2657")
       end
 
-      xit "adds a white queen" do
+      it "adds a white queen" do
         chess.add_white_pieces
-        queen = chess.grid[0][3]
+        queen = chess.grid[1][3]
         expect(queen).to be_a(Queen)
         expect(queen.unicode).to eq("\u2655")
       end
 
-      xit "adds a white king" do
+      it "adds a white king" do
         chess.add_white_pieces
-        king = chess.grid[0][4]
+        king = chess.grid[1][4]
         expect(king).to be_a(King)
         expect(king.unicode).to eq("\u2654")
       end
