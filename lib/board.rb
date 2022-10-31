@@ -63,6 +63,14 @@ class Board
 
     grid[8] = array_with_pieces
   end
+
+  def add_black_pawns
+    grid[7].each do |ele|
+      pawn = Pawn.new
+      pawn.black
+      ele = pawn
+    end
+  end
 end
 
 
