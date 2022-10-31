@@ -46,10 +46,10 @@ class Board
   end
 
   def add_white_pawns
-    grid[2].fill(Pawn.new)
-
-    grid[2].each do |pawn|
+    grid[2].each_with_index do |ele, index|
+      pawn = Pawn.new
       pawn.white
+      grid[2][index] = pawn
     end
   end
 
@@ -65,10 +65,10 @@ class Board
   end
 
   def add_black_pawns
-    grid[7].each do |ele|
+    grid[7].each_with_index do |ele, index|
       pawn = Pawn.new
       pawn.black
-      ele = pawn
+      grid[7][index] = pawn
     end
   end
 end
