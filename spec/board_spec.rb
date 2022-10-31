@@ -111,14 +111,14 @@ describe Board do
     subject(:black_pieces_board) { described_class.new }
 
     context "When called" do
-      xit "removes all dummy elements" do
+      it "removes all dummy elements" do
         black_pieces_board.make_chess_board
         black_pieces_board.add_black_pieces
-        result = black_pieces_board.grid[1].include?('')
+        result = black_pieces_board.grid[8].include?('')
         expect(result).to eq(false)
       end
 
-      xit "adds two black rooks" do
+      it "adds two black rooks" do
         black_pieces_board.make_chess_board
         black_pieces_board.add_black_pieces
         rook1 = black_pieces_board.grid[8][0]
@@ -129,7 +129,7 @@ describe Board do
         expect(rook2.unicode).to eq("\u265c")
       end
 
-      xit "adds two black knights" do
+      it "adds two black knights" do
         black_pieces_board.make_chess_board
         black_pieces_board.add_black_pieces
         knight1 = black_pieces_board.grid[8][1]
@@ -140,7 +140,7 @@ describe Board do
         expect(knight2.unicode).to eq("\u265e")
       end
 
-      xit "adds two black bishops" do
+      it "adds two black bishops" do
         black_pieces_board.make_chess_board
         black_pieces_board.add_black_pieces
         bishop1 = black_pieces_board.grid[8][2]
@@ -151,15 +151,15 @@ describe Board do
         expect(bishop2.unicode).to eq("\u265d")
       end
 
-      xit "adds a black queen" do
+      it "adds a black queen" do
         black_pieces_board.make_chess_board
         black_pieces_board.add_black_pieces
         queen = black_pieces_board.grid[8][3]
         expect(queen).to be_a(Queen)
-        expect(queen.unicode).to eq("\u2655")
+        expect(queen.unicode).to eq("\u265b")
       end
 
-      xit "adds a black king" do
+      it "adds a black king" do
         black_pieces_board.make_chess_board
         black_pieces_board.add_black_pieces
         king = black_pieces_board.grid[8][4]
@@ -168,4 +168,32 @@ describe Board do
       end
     end
   end
+
+  describe "#add_black_pawns" do
+    subject(:black_pawn_board) { described_class.new }
+
+    context "When called" do
+      xit "removes all dummy elements" do
+        black_pawn_board.make_chess_board
+        black_pawn_board.add_black_pawns
+        result = black_pawn_board.grid[7].include?("")
+        expect(result).to eq(false)
+      end
+
+      xit "adds 8 pawns" do
+        black_pawn_board.make_chess_board
+        black_pawn_board.add_black_pawns
+        result = black_pawn_board.grid[2].all?(Pawn)
+        expect(result).to eq(true)
+      end
+
+      xit "all pawns are black" do
+        black_pawn_board.make_chess_board
+        black_pawn_board.add_black_pawns
+        result = black_pawn_board.grid[2].all? {|piece| piece.unicode = "\u265f"}
+        expect(result).to eq(true)
+      end
+    end
+  end
+
 end
