@@ -8,11 +8,11 @@ class Bishop
   end
 
   def white
-    unicode = "\u2657"
+    @unicode = "\u2657"
   end
 
   def black
-    unicode = "\u265d"
+    @unicode = "\u265d"
   end
 
 end
