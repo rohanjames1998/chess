@@ -53,7 +53,16 @@ class Board
     end
   end
 
+  def add_black_pieces
+    array_with_pieces = [Rook.new, Knight.new, Bishop.new, Queen.new, King.new, Bishop.new, Knight.new, Rook.new]
 
+    # Making each piece black
+    array_with_pieces.each do |piece|
+      piece.black
+    end
+
+    grid[8] = array_with_pieces
+  end
 end
 
 
