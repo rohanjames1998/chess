@@ -15,13 +15,13 @@ class Board
   def make_chess_board
     dummy_ele = ''
     col = []
-    row = 1
-    while row <= 8
+    row = 8
+    while row > 0
       while col.length < 8
         col << dummy_ele
       end
       grid[row] = col
-      row += 1
+      row -= 1
       col = []
     end
   end
@@ -52,6 +52,8 @@ class Board
       pawn.white
     end
   end
+
+
 end
 
 
