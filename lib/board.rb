@@ -26,11 +26,12 @@ class Board
     end
   end
 
-  def add_pieces_to_board
+  def add_new_pieces_to_board
+    make_chess_board
     add_white_pieces
     add_white_pawns
-    add_black_pieces
-    add_black_pawns
+    add_black_piece
+    add_black_pawn
   end
 
   def add_white_pieces
@@ -45,5 +46,13 @@ class Board
   end
 
   def add_white_pawns
+    grid[2].fill(Pawn.new)
+
+    grid[2].each do |pawn|
+      pawn.white
+    end
   end
 end
+
+
+
