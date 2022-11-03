@@ -30,8 +30,8 @@ class Board
     make_chess_board
     add_white_pieces
     add_white_pawns
-    add_black_piece
-    add_black_pawn
+    add_black_pieces
+    add_black_pawns
   end
 
   def add_white_pieces
@@ -70,6 +70,19 @@ class Board
       pawn.black
       grid[7][index] = pawn
     end
+  end
+
+  def display_chess
+    puts <<~CHESSBOARD
+    \033[48;5;254m #{grid_piece(grid[8][0])} \033[48;5;90m #{grid_piece(grid[8][1])} \033[48;5;254m #{grid_piece(grid[8][2])} \033[48;5;90m #{grid_piece(grid[8][3])} \033[48;5;254m #{grid_piece(grid[8][4])} \033[48;5;90m #{grid_piece(grid[8][5])} \033[48;5;254m #{grid_piece(grid[8][6])} \033[48;5;90m #{grid_piece(grid[8][7])} \033[0m
+    \033[48;5;90m #{grid_piece(grid[7][0])} \033[48;5;254m #{grid_piece(grid[7][1])} \033[48;5;90m #{grid_piece(grid[7][2])} \033[48;5;254m #{grid_piece(grid[7][3])} \033[48;5;90m #{grid_piece(grid[7][4])} \033[48;5;254m #{grid_piece(grid[7][5])} \033[48;5;90m #{grid_piece(grid[7][6])} \033[48;5;254m #{grid_piece(grid[7][7])} \033[0m
+    \033[48;5;254m #{grid_piece(grid[6][0])} \033[48;5;90m #{grid_piece(grid[6][1])} \033[48;5;254m #{grid_piece(grid[6][2])} \033[48;5;90m #{grid_piece(grid[6][3])} \033[48;5;254m #{grid_piece(grid[6][4])} \033[48;5;90m #{grid_piece(grid[6][5])} \033[48;5;254m #{grid_piece(grid[6][6])} \033[48;5;90m #{grid_piece(grid[6][7])} \033[0m
+    \033[48;5;90m #{grid_piece(grid[5][0])} \033[48;5;254m #{grid_piece(grid[5][1])} \033[48;5;90m #{grid_piece(grid[5][2])} \033[48;5;254m #{grid_piece(grid[5][3])} \033[48;5;90m #{grid_piece(grid[5][4])} \033[48;5;254m #{grid_piece(grid[5][5])} \033[48;5;90m #{grid_piece(grid[5][6])} \033[48;5;254m #{grid_piece(grid[5][7])} \033[0m
+    \033[48;5;254m #{grid_piece(grid[4][0])} \033[48;5;90m #{grid_piece(grid[4][1])} \033[48;5;254m #{grid_piece(grid[4][2])} \033[48;5;90m #{grid_piece(grid[4][3])} \033[48;5;254m #{grid_piece(grid[4][4])} \033[48;5;90m #{grid_piece(grid[4][5])} \033[48;5;254m #{grid_piece(grid[4][6])} \033[48;5;90m #{grid_piece(grid[4][7])} \033[0m
+    \033[48;5;90m #{grid_piece(grid[3][0])} \033[48;5;254m #{grid_piece(grid[3][1])} \033[48;5;90m #{grid_piece(grid[3][2])} \033[48;5;254m #{grid_piece(grid[3][3])} \033[48;5;90m #{grid_piece(grid[3][4])} \033[48;5;254m #{grid_piece(grid[3][5])} \033[48;5;90m #{grid_piece(grid[3][6])} \033[48;5;254m #{grid_piece(grid[3][7])} \033[0m
+    \033[48;5;254m #{grid_piece(grid[2][0])} \033[48;5;90m #{grid_piece(grid[2][1])} \033[48;5;254m #{grid_piece(grid[2][2])} \033[48;5;90m #{grid_piece(grid[2][3])} \033[48;5;254m #{grid_piece(grid[2][4])} \033[48;5;90m #{grid_piece(grid[2][5])} \033[48;5;254m #{grid_piece(grid[2][6])} \033[48;5;90m #{grid_piece(grid[2][7])} \033[0m
+    \033[48;5;90m #{grid_piece(grid[1][0])} \033[48;5;254m #{grid_piece(grid[1][1])} \033[48;5;90m #{grid_piece(grid[1][2])} \033[48;5;254m #{grid_piece(grid[1][3])} \033[48;5;90m #{grid_piece(grid[1][4])} \033[48;5;254m #{grid_piece(grid[1][5])} \033[48;5;90m #{grid_piece(grid[1][6])} \033[48;5;254m #{grid_piece(grid[1][7])} \033[0m
+    CHESSBOARD
   end
 end
 
