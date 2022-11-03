@@ -20,17 +20,18 @@ describe Board do
 
   describe "#add_white_pieces" do
     subject(:white_pieces_board) { described_class.new }
+    before do
+      white_pieces_board.make_chess_board
+    end
 
     context "When called" do
       it "removes all dummy elements" do
-        white_pieces_board.make_chess_board
         white_pieces_board.add_white_pieces
         result = white_pieces_board.grid[1].include?('')
         expect(result).to eq(false)
       end
 
       it "adds two white rooks" do
-        white_pieces_board.make_chess_board
         white_pieces_board.add_white_pieces
         rook1 = white_pieces_board.grid[1][0]
         rook2 = white_pieces_board.grid[1][7]
@@ -41,7 +42,6 @@ describe Board do
       end
 
       it "adds two white knights" do
-        white_pieces_board.make_chess_board
         white_pieces_board.add_white_pieces
         knight1 = white_pieces_board.grid[1][1]
         knight2 = white_pieces_board.grid[1][6]
@@ -52,7 +52,6 @@ describe Board do
       end
 
       it "adds two white bishops" do
-        white_pieces_board.make_chess_board
         white_pieces_board.add_white_pieces
         bishop1 = white_pieces_board.grid[1][2]
         bishop2 = white_pieces_board.grid[1][5]
@@ -63,7 +62,6 @@ describe Board do
       end
 
       it "adds a white queen" do
-        white_pieces_board.make_chess_board
         white_pieces_board.add_white_pieces
         queen = white_pieces_board.grid[1][3]
         expect(queen).to be_a(Queen)
@@ -71,7 +69,6 @@ describe Board do
       end
 
       it "adds a white king" do
-        white_pieces_board.make_chess_board
         white_pieces_board.add_white_pieces
         king = white_pieces_board.grid[1][4]
         expect(king).to be_a(King)
@@ -82,24 +79,24 @@ describe Board do
 
   describe "#add_white_pawns" do
     subject(:white_pawn_board) { described_class.new }
+    before do
+      white_pawn_board.make_chess_board
+    end
 
     context "When called" do
       it "removes all dummy elements" do
-        white_pawn_board.make_chess_board
         white_pawn_board.add_white_pawns
         result = white_pawn_board.grid[2].include?("")
         expect(result).to eq(false)
       end
 
       it "adds 8 pawns" do
-        white_pawn_board.make_chess_board
         white_pawn_board.add_white_pawns
         result = white_pawn_board.grid[2].all?(Pawn)
         expect(result).to eq(true)
       end
 
       it "all pawns are white" do
-        white_pawn_board.make_chess_board
         white_pawn_board.add_white_pawns
         result = white_pawn_board.grid[2].all? {|piece| piece.unicode = "\u2659"}
         expect(result).to eq(true)
@@ -109,17 +106,18 @@ describe Board do
 
   describe "#add_black_pieces" do
     subject(:black_pieces_board) { described_class.new }
+    before do
+      black_pieces_board.make_chess_board
+    end
 
     context "When called" do
       it "removes all dummy elements" do
-        black_pieces_board.make_chess_board
         black_pieces_board.add_black_pieces
         result = black_pieces_board.grid[8].include?('')
         expect(result).to eq(false)
       end
 
       it "adds two black rooks" do
-        black_pieces_board.make_chess_board
         black_pieces_board.add_black_pieces
         rook1 = black_pieces_board.grid[8][0]
         rook2 = black_pieces_board.grid[8][7]
@@ -130,7 +128,6 @@ describe Board do
       end
 
       it "adds two black knights" do
-        black_pieces_board.make_chess_board
         black_pieces_board.add_black_pieces
         knight1 = black_pieces_board.grid[8][1]
         knight2 = black_pieces_board.grid[8][6]
@@ -141,7 +138,6 @@ describe Board do
       end
 
       it "adds two black bishops" do
-        black_pieces_board.make_chess_board
         black_pieces_board.add_black_pieces
         bishop1 = black_pieces_board.grid[8][2]
         bishop2 = black_pieces_board.grid[8][5]
@@ -152,7 +148,6 @@ describe Board do
       end
 
       it "adds a black queen" do
-        black_pieces_board.make_chess_board
         black_pieces_board.add_black_pieces
         queen = black_pieces_board.grid[8][3]
         expect(queen).to be_a(Queen)
@@ -160,7 +155,6 @@ describe Board do
       end
 
       it "adds a black king" do
-        black_pieces_board.make_chess_board
         black_pieces_board.add_black_pieces
         king = black_pieces_board.grid[8][4]
         expect(king).to be_a(King)
@@ -171,29 +165,53 @@ describe Board do
 
   describe "#add_black_pawns" do
     subject(:black_pawn_board) { described_class.new }
+    before do
+      black_pawn_board.make_chess_board
+    end
 
     context "When called" do
-      xit "removes all dummy elements" do
-        black_pawn_board.make_chess_board
+      it "removes all dummy elements" do
         black_pawn_board.add_black_pawns
         result = black_pawn_board.grid[7].include?("")
         expect(result).to eq(false)
       end
 
-      xit "adds 8 pawns" do
-        black_pawn_board.make_chess_board
+      it "adds 8 pawns" do
         black_pawn_board.add_black_pawns
-        result = black_pawn_board.grid[2].all?(Pawn)
+        result = black_pawn_board.grid[7].all?(Pawn)
         expect(result).to eq(true)
       end
 
-      xit "all pawns are black" do
-        black_pawn_board.make_chess_board
+      it "all pawns are black" do
         black_pawn_board.add_black_pawns
-        result = black_pawn_board.grid[2].all? {|piece| piece.unicode = "\u265f"}
+        result = black_pawn_board.grid[7].all? {|piece| piece.unicode = "\u265f"}
         expect(result).to eq(true)
       end
     end
   end
 
+  describe "#chess_piece_at" do
+    subject(:displaying_board) { described_class.new }
+    before do
+      display_board.add_new_pieces_to_board
+    end
+
+    context "When there is a chess piece on given location" do
+      xit "returns unicode of the piece" do
+        rook_location = displaying_board.grid[8][0]
+        black_rook = "\u265c"
+        result = displaying_board.chess_piece_at(rook_location)
+        expect(result).to eq(black_rook)
+      end
+    end
+
+    context "When there is NO chess piece on given location" do
+      xit "returns empty space" do
+      empty_location = displaying_board.grid[4][0]
+      empty_space_string = " "
+      result = displaying_board.chess_piece_at(empty_location)
+      expect(result).to eq(empty_space_string)
+      end
+    end
+  end
 end
