@@ -193,11 +193,11 @@ describe Board do
   describe "#chess_piece_at" do
     subject(:displaying_board) { described_class.new }
     before do
-      display_board.add_new_pieces_to_board
+      displaying_board.add_new_pieces_to_board
     end
 
     context "When there is a chess piece on given location" do
-      xit "returns unicode of the piece" do
+      it "returns unicode of the piece" do
         rook_location = displaying_board.grid[8][0]
         black_rook = "\u265c"
         result = displaying_board.chess_piece_at(rook_location)
@@ -206,11 +206,41 @@ describe Board do
     end
 
     context "When there is NO chess piece on given location" do
-      xit "returns empty space" do
+      it "returns empty space" do
       empty_location = displaying_board.grid[4][0]
       empty_space_string = " "
       result = displaying_board.chess_piece_at(empty_location)
       expect(result).to eq(empty_space_string)
+      end
+    end
+  end
+
+  describe "#[]" do
+    subject(:getter_board) { described_class.new }
+    before do
+      getter_board.add_new_pieces_to_board
+    end
+    context "When given valid input" do
+      xit "returns the unicode of piece on the location given" do
+      valid_input = "1a"
+      unicode = "\u2656"
+      returned_val = getter_board[valid_input]
+      expect(returned_val).to eq(unicode)
+      end
+
+      xit "returns empty space if no piece is present at given location" do
+        valid_input = "3f"
+        expected_output = " "
+        returned_val = getter_board[valid_input]
+        expect(returned_val).to eq(expected_output)
+      end
+    end
+    context "When given invalid input" do
+      xit "returns nil" do
+        invalid_input = "9k"
+        expected_output = nil
+        returned_val = getter_board[invalid_input]
+        expect(returned_val).to eq(expected_output)
       end
     end
   end
