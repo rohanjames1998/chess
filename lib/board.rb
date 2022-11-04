@@ -72,17 +72,18 @@ class Board
     end
   end
 
-  # This instance method uses combination of unicode and ASNI escape sequences to display chess board on the
+  # This instance method uses combination of unicode and ASNI escape sequences to display chess board on the console.
   def display_chess
     puts <<~CHESSBOARD
-    \033[48;5;254m #{chess_piece_at(grid[8][0])} \033[48;5;90m #{chess_piece_at(grid[8][1])} \033[48;5;254m #{chess_piece_at(grid[8][2])} \033[48;5;90m #{chess_piece_at(grid[8][3])} \033[48;5;254m #{chess_piece_at(grid[8][4])} \033[48;5;90m #{chess_piece_at(grid[8][5])} \033[48;5;254m #{chess_piece_at(grid[8][6])} \033[48;5;90m #{chess_piece_at(grid[8][7])} \033[0m
-    \033[48;5;90m #{chess_piece_at(grid[7][0])} \033[48;5;254m #{chess_piece_at(grid[7][1])} \033[48;5;90m #{chess_piece_at(grid[7][2])} \033[48;5;254m #{chess_piece_at(grid[7][3])} \033[48;5;90m #{chess_piece_at(grid[7][4])} \033[48;5;254m #{chess_piece_at(grid[7][5])} \033[48;5;90m #{chess_piece_at(grid[7][6])} \033[48;5;254m #{chess_piece_at(grid[7][7])} \033[0m
-    \033[48;5;254m #{chess_piece_at(grid[6][0])} \033[48;5;90m #{chess_piece_at(grid[6][1])} \033[48;5;254m #{chess_piece_at(grid[6][2])} \033[48;5;90m #{chess_piece_at(grid[6][3])} \033[48;5;254m #{chess_piece_at(grid[6][4])} \033[48;5;90m #{chess_piece_at(grid[6][5])} \033[48;5;254m #{chess_piece_at(grid[6][6])} \033[48;5;90m #{chess_piece_at(grid[6][7])} \033[0m
-    \033[48;5;90m #{chess_piece_at(grid[5][0])} \033[48;5;254m #{chess_piece_at(grid[5][1])} \033[48;5;90m #{chess_piece_at(grid[5][2])} \033[48;5;254m #{chess_piece_at(grid[5][3])} \033[48;5;90m #{chess_piece_at(grid[5][4])} \033[48;5;254m #{chess_piece_at(grid[5][5])} \033[48;5;90m #{chess_piece_at(grid[5][6])} \033[48;5;254m #{chess_piece_at(grid[5][7])} \033[0m
-    \033[48;5;254m #{chess_piece_at(grid[4][0])} \033[48;5;90m #{chess_piece_at(grid[4][1])} \033[48;5;254m #{chess_piece_at(grid[4][2])} \033[48;5;90m #{chess_piece_at(grid[4][3])} \033[48;5;254m #{chess_piece_at(grid[4][4])} \033[48;5;90m #{chess_piece_at(grid[4][5])} \033[48;5;254m #{chess_piece_at(grid[4][6])} \033[48;5;90m #{chess_piece_at(grid[4][7])} \033[0m
-    \033[48;5;90m #{chess_piece_at(grid[3][0])} \033[48;5;254m #{chess_piece_at(grid[3][1])} \033[48;5;90m #{chess_piece_at(grid[3][2])} \033[48;5;254m #{chess_piece_at(grid[3][3])} \033[48;5;90m #{chess_piece_at(grid[3][4])} \033[48;5;254m #{chess_piece_at(grid[3][5])} \033[48;5;90m #{chess_piece_at(grid[3][6])} \033[48;5;254m #{chess_piece_at(grid[3][7])} \033[0m
-    \033[48;5;254m #{chess_piece_at(grid[2][0])} \033[48;5;90m #{chess_piece_at(grid[2][1])} \033[48;5;254m #{chess_piece_at(grid[2][2])} \033[48;5;90m #{chess_piece_at(grid[2][3])} \033[48;5;254m #{chess_piece_at(grid[2][4])} \033[48;5;90m #{chess_piece_at(grid[2][5])} \033[48;5;254m #{chess_piece_at(grid[2][6])} \033[48;5;90m #{chess_piece_at(grid[2][7])} \033[0m
-    \033[48;5;90m #{chess_piece_at(grid[1][0])} \033[48;5;254m #{chess_piece_at(grid[1][1])} \033[48;5;90m #{chess_piece_at(grid[1][2])} \033[48;5;254m #{chess_piece_at(grid[1][3])} \033[48;5;90m #{chess_piece_at(grid[1][4])} \033[48;5;254m #{chess_piece_at(grid[1][5])} \033[48;5;90m #{chess_piece_at(grid[1][6])} \033[48;5;254m #{chess_piece_at(grid[1][7])} \033[0m
+    8 \033[48;5;254m #{chess_piece_at(grid[8][0])} \033[48;5;90m #{chess_piece_at(grid[8][1])} \033[48;5;254m #{chess_piece_at(grid[8][2])} \033[48;5;90m #{chess_piece_at(grid[8][3])} \033[48;5;254m #{chess_piece_at(grid[8][4])} \033[48;5;90m #{chess_piece_at(grid[8][5])} \033[48;5;254m #{chess_piece_at(grid[8][6])} \033[48;5;90m #{chess_piece_at(grid[8][7])} \033[0m
+    7 \033[48;5;90m #{chess_piece_at(grid[7][0])} \033[48;5;254m #{chess_piece_at(grid[7][1])} \033[48;5;90m #{chess_piece_at(grid[7][2])} \033[48;5;254m #{chess_piece_at(grid[7][3])} \033[48;5;90m #{chess_piece_at(grid[7][4])} \033[48;5;254m #{chess_piece_at(grid[7][5])} \033[48;5;90m #{chess_piece_at(grid[7][6])} \033[48;5;254m #{chess_piece_at(grid[7][7])} \033[0m
+    6 \033[48;5;254m #{chess_piece_at(grid[6][0])} \033[48;5;90m #{chess_piece_at(grid[6][1])} \033[48;5;254m #{chess_piece_at(grid[6][2])} \033[48;5;90m #{chess_piece_at(grid[6][3])} \033[48;5;254m #{chess_piece_at(grid[6][4])} \033[48;5;90m #{chess_piece_at(grid[6][5])} \033[48;5;254m #{chess_piece_at(grid[6][6])} \033[48;5;90m #{chess_piece_at(grid[6][7])} \033[0m
+    5 \033[48;5;90m #{chess_piece_at(grid[5][0])} \033[48;5;254m #{chess_piece_at(grid[5][1])} \033[48;5;90m #{chess_piece_at(grid[5][2])} \033[48;5;254m #{chess_piece_at(grid[5][3])} \033[48;5;90m #{chess_piece_at(grid[5][4])} \033[48;5;254m #{chess_piece_at(grid[5][5])} \033[48;5;90m #{chess_piece_at(grid[5][6])} \033[48;5;254m #{chess_piece_at(grid[5][7])} \033[0m
+    4 \033[48;5;254m #{chess_piece_at(grid[4][0])} \033[48;5;90m #{chess_piece_at(grid[4][1])} \033[48;5;254m #{chess_piece_at(grid[4][2])} \033[48;5;90m #{chess_piece_at(grid[4][3])} \033[48;5;254m #{chess_piece_at(grid[4][4])} \033[48;5;90m #{chess_piece_at(grid[4][5])} \033[48;5;254m #{chess_piece_at(grid[4][6])} \033[48;5;90m #{chess_piece_at(grid[4][7])} \033[0m
+    3 \033[48;5;90m #{chess_piece_at(grid[3][0])} \033[48;5;254m #{chess_piece_at(grid[3][1])} \033[48;5;90m #{chess_piece_at(grid[3][2])} \033[48;5;254m #{chess_piece_at(grid[3][3])} \033[48;5;90m #{chess_piece_at(grid[3][4])} \033[48;5;254m #{chess_piece_at(grid[3][5])} \033[48;5;90m #{chess_piece_at(grid[3][6])} \033[48;5;254m #{chess_piece_at(grid[3][7])} \033[0m
+    2 \033[48;5;254m #{chess_piece_at(grid[2][0])} \033[48;5;90m #{chess_piece_at(grid[2][1])} \033[48;5;254m #{chess_piece_at(grid[2][2])} \033[48;5;90m #{chess_piece_at(grid[2][3])} \033[48;5;254m #{chess_piece_at(grid[2][4])} \033[48;5;90m #{chess_piece_at(grid[2][5])} \033[48;5;254m #{chess_piece_at(grid[2][6])} \033[48;5;90m #{chess_piece_at(grid[2][7])} \033[0m
+    1 \033[48;5;90m #{chess_piece_at(grid[1][0])} \033[48;5;254m #{chess_piece_at(grid[1][1])} \033[48;5;90m #{chess_piece_at(grid[1][2])} \033[48;5;254m #{chess_piece_at(grid[1][3])} \033[48;5;90m #{chess_piece_at(grid[1][4])} \033[48;5;254m #{chess_piece_at(grid[1][5])} \033[48;5;90m #{chess_piece_at(grid[1][6])} \033[48;5;254m #{chess_piece_at(grid[1][7])} \033[0m
+       a  b  c  d  e  f  g  h
     CHESSBOARD
   end
 
@@ -96,6 +97,13 @@ class Board
     end
   end
 
+  def [](location)
+    row = location[0].to_i
+    col = location[1].downcase.ord - 97
+    if grid[row]
+      chess_piece_at(grid[row][col])
+    end
+  end
 end
 
 
