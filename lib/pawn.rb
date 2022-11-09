@@ -2,19 +2,22 @@ require_relative "board"
 
 class Pawn
 
-  attr_reader :unicode
+  attr_reader :unicode, :color
 
   def initialize
     @unicode = ''
     @first_move = true
+    @color = ''
   end
 
   def white
     @unicode = "\u2659"
+    @color = 'white'
   end
 
   def black
     @unicode = "\u265f"
+    @color = 'black'
   end
 
   def generate_possible_moves(initial_loc, board)
