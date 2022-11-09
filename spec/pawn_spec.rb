@@ -1,47 +1,58 @@
 require_relative "../lib/pawn"
 
 describe Pawn do
-  subject(:single_pawn) { described_class.new }
-  let(:board) { instance_double(Board) }
+  subject (:pawn) { described_class.new }
+  let(:board) { instance_double(Board)}
+  let(:dummy_piece) { instance_double(Knight) }
 
-  describe "#generate_possible_moves" do
-    context "When the pawn is moving for the first time" do
-      xit "returns 2 possible correct moves" do
-        initial_location = [2, 0]
-        correct_possible_moves = [[3, 0] [4, 0]]
-        allow(single_pawn).to receive(:location).and_return(initial_location)
-        allow(single_pawn).to receive(:first_move?).and_return(true)
-        result = single_pawn.generate_possible_moves(initial_location, board)
-        expect(result).to eq(correct_possible_moves)
+  describe "#check_valid_moves" do
+    context "When pawn its the first move" do
+      xit "returns two forward locations when they are empty" do
+        normal_moves = ["3a", "4a"]
+        kill_moves = []
+        expected_result = normal_moves
+        allow(board).to receive(["3a"]).and_return('')
+        allow(board).to receive(["4a"]).and_return('')
+        allow(pawn).to receive(:first_move).and_return(true)
+        possible_moves = pawn.check_valid_moves(normal_moves, kill_moves, board)
+        expect(possible_moves).to eq(expected_result)
       end
-
-      xit "changes @first_move? to false" do
-        initial_location = [7, 7]
-        allow(single_pawn).to receive(:location).and_return(initial_location)
-        allow(single_pawn).to receive(:first_move?).and_return(true)
-        expect(single_pawn).to receive(:first_move?=).with(false)
-        single_pawn.generate_possible_moves(initial_location, board)
+      xit "returns one forward move if other is blocked" do
+        normal_moves = ["3a", "4a"]
+        # We leave kill_moves empty because it is not the subject of this test.
+        kill_moves = []
+        expected_result = ["3a"]
+        allow(board).to receive(["3a"]).and_return('')
+        allow(board).to receive(["4a"]).and_return(dummy_piece)
+        allow(pawn).to receive(:first_move).and_return(true)
+        possible_moves = pawn.check_valid_moves(normal_moves, kill_moves, board)
+        expect(possible_moves).to eq(expected_result)
       end
     end
-
-    context "When there is an enemy piece that pawn can kill" do
-      let(:enemy_piece) { instance_double(Pawn)}
-      before do
-        allow(enemy_piece).to receive(:unicode).and_return("\u265f")
-        allow(single_pawn).to receive(:first_move?).and_return(false)
-        allow(board).to receive(:grid[4]).and_return([" ","#{enemy_piece}"," "," "," "," "," "," "," "])
+    context "When its not the first move" do
+      xit "returns only one possible move if there are no enemy pieces to kill" do
+        normal_moves =  ["5b"]
+        kill_moves = []
+        expected_result = normal_moves
+        allow(board).to receive(["5b"]).and_return('')
+        allow(pawn).to receive(:first_move).and_return(false)
+        possible_moves = pawn.check_valid_moves(normal_moves, kill_moves, board)
+        expect(possible_moves).to eq(normal_moves)
       end
-
-      xit "returns enemy piece's location as a possible move" do
-        initial_location = [3, 0]
-        enemy_position = [4, 0]
-        allow(single_pawn).to receive(:location).and_return(initial_location)
-        result = single_pawn.generate_possible_moves(initial_location, board)
-        expect(result).to include(enemy_position)
+    end
+    context "When there are enemy pieces to kill" do
+      xit "returns enemy piece's location" do
+        normal_moves = ["4b"]
+        kill_moves = ["4a", "4c"]
+        expected_result = kill_moves
+        allow(pawn).to receive(:first_move).and_return(false)
+        allow(board).to receive(["4a"])
+        possible_moves = pawn.check_valid_moves(normal_moves, kill_moves, board)
+        expect(possible_moves).to eq(expected_result)
       end
     end
   end
-end
+
 
 
 
