@@ -1,7 +1,6 @@
-require_relative "board"
+# require_relative "board"
 
 class Pawn
-
   attr_reader :unicode, :color
 
   def initialize
@@ -22,15 +21,14 @@ class Pawn
 
   def generate_possible_moves(initial_loc, board)
     # Since this method is hard coded and relies on other method for its main work
-    # We won't test it. Instead we will test #check_valid_move.
-    pawn = board[initial_location]
+    # we won't test it. Instead we will test #check_valid_move.
     # converting both row and col to integers so we can increase or decrease them.
     row = initial_loc[0].to_i
     col = initial_loc[1].ord
     normal_moves = []
     kill_moves = []
 
-    if @first_move?
+    if @first_move
       normal_moves << (row + 2).to_s + col.chr
       normal_moves << (row + 1).to_s + col.chr
       kill_moves << (row + 1).to_s + (col + 1).chr
@@ -45,5 +43,23 @@ class Pawn
     return possible_moves
   end
 
+  def check_valid_moves(normal_moves, kill_moves, board)
+    possible_moves = []
+    if normal_moves.length > 0
+      normal_moves.each do |move|
+        possible_moves << move if board[move] == ''
+      end
+    end
 
+    if kill_moves.length > 0
+      kill_moves.each do |move|
+        # assigning the element at location to a variable
+        ele = board[move]
+        if ele != ''
+          possible_moves << move if ele.color != color
+        end
+      end
+    end
+    possible_moves
+  end
 end
