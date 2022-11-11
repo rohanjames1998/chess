@@ -47,7 +47,7 @@ class Bishop
         valid_moves << possible_move
         break
       else # For ally piece.
-        next
+        break
       end
     end
     valid_moves
@@ -71,7 +71,7 @@ class Bishop
         valid_moves << possible_move
         break
       else # For ally piece.
-        next
+        break
       end
     end
     valid_moves
@@ -82,7 +82,7 @@ class Bishop
     row = initial_loc[0].to_i
     col = initial_loc[1].ord - 97
 
-    while row > 0 && col < 7
+    while row > 1 && col < 7
       row -= 1
       col += 1
       # Converting col back to alphabet by adding 97.
@@ -95,7 +95,7 @@ class Bishop
         valid_moves << possible_move
         break
       else # For ally piece.
-        next
+        break
       end
     end
     valid_moves
@@ -106,7 +106,7 @@ class Bishop
     row = initial_loc[0].to_i
     col = initial_loc[1].ord - 97
 
-    while row > 0 && col > 0
+    while row >= 0 && col > 0
       row -= 1
       col -= 1
       # Converting col back to alphabet by adding 97.
@@ -119,7 +119,7 @@ class Bishop
         valid_moves << possible_move
         break
       else # For ally piece.
-        next
+        break
       end
     end
     valid_moves
