@@ -101,7 +101,15 @@ class Board
     row = location[0].to_i
     col = location[1].downcase.ord - 97
     if grid[row]
-      chess_piece_at(grid[row][col])
+      grid[row][col]
+    end
+  end
+
+  def []=(location, element)
+    row = location[0].to_i
+    col = location[1].downcase.ord - 97
+    if grid[row]
+      grid[row][col] = element
     end
   end
 end

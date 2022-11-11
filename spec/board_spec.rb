@@ -98,7 +98,7 @@ describe Board do
 
       it "all pawns are white" do
         white_pawn_board.add_white_pawns
-        result = white_pawn_board.grid[2].all? {|piece| piece.unicode = "\u2659"}
+        result = white_pawn_board.grid[2].all? {|piece| piece.unicode == "\u2659"}
         expect(result).to eq(true)
       end
     end
@@ -184,7 +184,7 @@ describe Board do
 
       it "all pawns are black" do
         black_pawn_board.add_black_pawns
-        result = black_pawn_board.grid[7].all? {|piece| piece.unicode = "\u265f"}
+        result = black_pawn_board.grid[7].all? {|piece| piece.unicode == "\u265f"}
         expect(result).to eq(true)
       end
     end
@@ -221,26 +221,44 @@ describe Board do
       getter_board.add_new_pieces_to_board
     end
     context "When given valid input" do
-      xit "returns the unicode of piece on the location given" do
+      it "returns the chess piece on the given location " do
       valid_input = "1a"
-      unicode = "\u2656"
       returned_val = getter_board[valid_input]
-      expect(returned_val).to eq(unicode)
+      expect(returned_val).to be_a(Rook)
       end
 
-      xit "returns empty space if no piece is present at given location" do
+      it "returns empty space if no piece is present at given location" do
         valid_input = "3f"
-        expected_output = " "
+        expected_output = ""
         returned_val = getter_board[valid_input]
         expect(returned_val).to eq(expected_output)
       end
     end
     context "When given invalid input" do
-      xit "returns nil" do
+      it "returns nil" do
         invalid_input = "9k"
         expected_output = nil
         returned_val = getter_board[invalid_input]
         expect(returned_val).to eq(expected_output)
+      end
+    end
+  end
+
+  describe "#[]=" do
+
+    subject(:board) { described_class.new }
+    let(:dummy_piece) { instance_double(Pawn) }
+
+    before do
+      board.add_new_pieces_to_board
+    end
+
+    context "When called" do
+      it "sets element on given location" do
+        location = "1a"
+        element = dummy_piece
+        board[location] = element
+        expect(board[location]).to eq(element)
       end
     end
   end
