@@ -66,6 +66,9 @@ describe Chess do
   end
 
   describe "#get_player_piece" do
+    before do
+      allow(chess_game).to receive(:get_player_move)
+    end
     context "When given valid input" do
       it "breaks the loop" do
         valid_input = "1a"
@@ -114,13 +117,117 @@ describe Chess do
     end
   end
 
-  # describe "#get_player_move" do
-  #   context "When given valid move" do
-  #     before do
-  #       allow(dummy_piece).to receive(generate_possible_moves).and_return([])
-  #       allow()
-  #     xit "calls #move_piece" do
-  #       valid_move =
+  describe "#get_player_move" do
+    # Since we will have another function (#valid_move?) which checks player move.
+    # We will only test the functionality of the loop in this test.
+    before do
+      allow(chess_game).to receive(:display_potential_moves)
+      allow(chess_game).to receive(:get_input)
+      allow(chess_game).to receive(:move_piece)
+      allow(chess_game).to receive(:remove_potential_moves)
+    end
+    context "When given valid move" do
+      it "breaks the loop" do
+        # This is the piece player previously choose.
+        piece_to_move = '2a'
+        allow(chess_game).to receive(:valid_move?).and_return(true)
+        expect(chess_game).to receive(:get_input).once
+        chess_game.get_player_move(player, piece_to_move)
+      end
+    end
+    context "When player wants to choose another piece to move" do
+      it "calls #get_player_piece and breaks the loop" do
+        # In order to choose another piece player needs to enter 'x'.
+        player_choice = 'x'
+        piece_to_move = '7h'
+        allow(chess_game).to receive(:get_input).and_return(player_choice)
+        expect(chess_game).to receive(:get_player_piece).once
+        chess_game.get_player_move(player, piece_to_move)
+      end
+    end
+    context "When given invalid move" do
+      it "restarts the loop until valid move is given" do
+        piece_to_move = '1h'
+        allow(chess_game).to receive(:valid_move?).and_return(false, false, true)
+        expect(chess_game).to receive(:get_input).exactly(3).times
+        chess_game.get_player_move(player, piece_to_move)
+      end
+    end
+  end
+
+  describe "#display_potential_moves" do
+
+    RSpec::Matchers.define :have_indicators do |potential_moves|
+      match do |indicator, board|
+        if potential_moves.all? { |move| board[move] == indicator }
+          return true
+        else
+          return false
+        end
+      end
+    end
+
+    context "When called" do
+      xit "adds indicator symbol on board where player can potentially move their piece" do
+        indicator = "\u2718"
+        piece = '2a'
+        potential_moves = ['4a', '3a']
+        allow(chess.board).to receive(:[]).and_return(dummy_piece)
+        allow(dummy_piece).to receive(:generate_potential_moves).and_return(potential_moves)
+        expect(potential_moves).to have_indicators(indicator, chess.board)
+        chess_game.display_potential_moves(piece)
+      end
+    end
+  end
+
+  describe "#valid_move?" do
+    before do
+    allow(chess.board).to receive(:[]).and_return(dummy_piece)
+    end
+    context "When given move has invalid format" do
+      xit "returns false" do
+        piece = '2a'
+        invalid_move = '9i'
+        allow(dummy_piece).to receive(:generate_potential_moves)
+        returned_val = chess_game.valid_move?(invalid_move, piece)
+        expect(returned_val).to eq(false)
+      end
+    end
+    context "When given move is not included in possible moves" do
+      xit "returns false" do
+      piece = '2a'
+      move = '5a'
+      possible_moves = ['3a', '4a']
+      returned_val = chess_game.valid_move?(move, piece)
+      expect(returned_val).to eq(false)
+      end
+    end
+    context "When given input is valid and included in possible moves" do
+      xit "returns true" do
+        piece = '7a'
+        valid_move = '6a'
+        possible_moves = ['6a', '5a']
+        returned_val = chess_game.valid_move?(move, piece)
+        expect(returned_val).to eq(true)
+      end
+    end
+  end
+
+  describe "#move_piece" do
+    context "When called" do
+      xit "places the piece to given location" do
+        piece = "2a"
+        move = "3a"
+        allow(board).to receive(:[]).with(piece).and_return(dummy_piece)
+        chess_game.move_piece(move, piece)
+        expect(chess.board[move]).to eq(dummy_piece)
+      end
+    end
+  end
+
+
+
+
 end
 
 
