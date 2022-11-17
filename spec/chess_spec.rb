@@ -11,7 +11,6 @@ describe Chess do
     allow(STDOUT).to receive(:puts)
     chess_game.board.add_new_pieces_to_board
     allow(player).to receive(:color).and_return('white')
-    allow(chess_game.board).to receive(:[]).and_return(dummy_piece)
     allow(dummy_piece).to receive(:color).and_return('white')
   end
 
@@ -81,6 +80,7 @@ describe Chess do
       it "restarts the loop until valid input is given" do
         invalid_input = "5p"
         valid_input = "7b"
+        allow(chess_game.board).to receive(:[]).and_return(dummy_piece)
         allow(chess_game).to receive(:gets).and_return(invalid_input, valid_input)
         expect(chess_game).to receive(:gets).twice
         chess_game.get_player_piece(player)
@@ -157,35 +157,25 @@ describe Chess do
 
   describe "#display_potential_moves" do
 
-    RSpec::Matchers.define :have_indicators do |potential_moves|
-      match do |indicator, board|
-        if potential_moves.all? { |move| board[move] == indicator }
-          return true
-        else
-          return false
-        end
-      end
-    end
-
     context "When called" do
-      xit "adds indicator symbol on board where player can potentially move their piece" do
-        indicator = "\u2718"
+      it "adds indicator symbol on board where player can potentially move their piece" do
+        indicator ="\u2718"
         piece = '2a'
         potential_moves = ['4a', '3a']
-        allow(chess.board).to receive(:[]).and_return(dummy_piece)
+        board = chess_game.board
         allow(dummy_piece).to receive(:generate_potential_moves).and_return(potential_moves)
-        expect(potential_moves).to have_indicators(indicator, chess.board)
         chess_game.display_potential_moves(piece)
+        expect(potential_moves.all? { |move| board[move] == indicator }).to eq(true)
       end
     end
   end
 
   describe "#valid_move?" do
     before do
-    allow(chess.board).to receive(:[]).and_return(dummy_piece)
+    allow(chess_game.board).to receive(:[]).and_return(dummy_piece)
     end
     context "When given move has invalid format" do
-      xit "returns false" do
+      it "returns false" do
         piece = '2a'
         invalid_move = '9i'
         allow(dummy_piece).to receive(:generate_potential_moves)
@@ -194,33 +184,43 @@ describe Chess do
       end
     end
     context "When given move is not included in possible moves" do
-      xit "returns false" do
+      it "returns false" do
       piece = '2a'
       move = '5a'
       possible_moves = ['3a', '4a']
+      allow(dummy_piece).to receive(:generate_potential_moves).and_return(possible_moves)
       returned_val = chess_game.valid_move?(move, piece)
       expect(returned_val).to eq(false)
       end
     end
     context "When given input is valid and included in possible moves" do
-      xit "returns true" do
+      it "returns true" do
         piece = '7a'
         valid_move = '6a'
         possible_moves = ['6a', '5a']
-        returned_val = chess_game.valid_move?(move, piece)
+        allow(dummy_piece).to receive(:generate_potential_moves).and_return(possible_moves)
+        returned_val = chess_game.valid_move?(valid_move, piece)
         expect(returned_val).to eq(true)
       end
     end
   end
 
   describe "#move_piece" do
+    before do
+    end
     context "When called" do
-      xit "places the piece to given location" do
+      it "places the piece to given location" do
         piece = "2a"
         move = "3a"
-        allow(board).to receive(:[]).with(piece).and_return(dummy_piece)
+        chess_game.board[piece] = dummy_piece
         chess_game.move_piece(move, piece)
-        expect(chess.board[move]).to eq(dummy_piece)
+        expect(chess_game.board['3a']).to eq(dummy_piece)
+      end
+      it "removes piece from its previous location" do
+        piece = "6c"
+        move = "5c"
+        chess_game.move_piece(move, piece)
+        expect(chess_game.board[move]).to eq('')
       end
     end
   end
