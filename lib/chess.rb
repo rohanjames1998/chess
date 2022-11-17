@@ -26,7 +26,7 @@ class Chess
   def get_player_piece(player)
     loop do
       puts "Which piece do you want to move?:"
-      input = gets.chomp.downcase.delete(' ')
+      input = get_input
       # This conditional checks whether the given input is valid && there is a piece present at the given
       # location
       case
@@ -34,7 +34,7 @@ class Chess
         print "The location you entered has no chess piece."
         next
       when valid_input?(input, player) && board[input] != " "
-        move_piece(player, board, player)
+         get_player_move(player, input)
         break
       else
         next
@@ -42,7 +42,53 @@ class Chess
     end
   end
 
-  def move_piece(location, board, player)
+  def get_input
+    gets.chomp.downcase.delete(' ')
+  end
+
+  def get_player_move(player, piece)
+    display_potential_moves(piece)
+    loop do
+      puts "\nEnter your move or 'x' to choose another piece:"
+      move = get_input
+      case
+      when move == 'x'
+        get_player_piece(player)
+        remove_potential_moves(piece)
+        break
+      when valid_move?(move)
+        move_piece(piece, move)
+        remove_potential_moves(piece)
+        break
+      else
+        puts "\n\033[31;1Invalid move\033[0m"
+        next
+      end
+    end
+  end
+
+  def display_potential_moves(piece)
+    potential_moves = board[piece].generate_potential_moves(piece, board)
+    indicator = "\u2718"
+    potential_moves.each do |move|
+      board[move] = indicator
+    end
+  end
+
+  def valid_move?(move, piece)
+    row = move[0]
+    col = move[1].downcase
+    potential_moves = board[piece].generate_potential_moves(piece, board)
+    if /[1-8]$/.match(row) && /[a-h]$/.match(col) && potential_moves.include?(move)
+      return true
+    end
+    return false
+  end
+
+  def move_piece(move, piece)
+    # This method moves the piece to given location and removes it from the previous location
+    board[move] = board[piece]
+    board[piece] = ''
   end
 
   def display_valid_input_format
