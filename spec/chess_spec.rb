@@ -89,16 +89,15 @@ describe Chess do
 
     RSpec::Matchers.define :have_any_upcase_letters do
       match do |string|
-        string.each do |letter|
-          if letter == letter.upcase
-            return true
-          end
+        string.each_char do |letter|
+          return true if /[A-Z]/.match(letter)
         end
         return false
       end
+    end
 
     context "When players enters a string with some space in it" do
-      xit "returns a string without any space" do
+      it "returns a string without any space" do
         player_input = '1 f '
         allow(chess_game).to receive(:gets).and_return(player_input)
         returned_val = chess_game.get_input
@@ -106,7 +105,7 @@ describe Chess do
       end
     end
     context "When player enters a string with uppercase letters" do
-      xit "returns a string with no upcase letters" do
+      it "returns a string with no upcase letters" do
         player_input = '7C'
         allow(chess_game).to receive(:gets).and_return(player_input)
         returned_val = chess_game.get_input
