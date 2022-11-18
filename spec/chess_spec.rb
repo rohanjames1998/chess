@@ -226,7 +226,7 @@ describe Chess do
 
   describe "#remove_potential_moves_indicator" do
     context "When called" do
-      xit "Removes all potential move indicators from the board" do
+      it "removes all potential move indicators from the board" do
         potential_moves = ['4a', '5a', '6a']
         board = chess_game.board
         indicator ="\u2718"
@@ -236,6 +236,19 @@ describe Chess do
         chess_game.remove_potential_moves_indicator(potential_moves)
         result = potential_moves.all? { |move| board[move] == '' }
         expect(result).to eq(true)
+      end
+      it "only removes indicators from the board and nothing else" do
+        potential_moves = ['3a', '3b', '3c']
+        board = chess_game.board
+        expected_result = ['', dummy_piece, '']
+        result = []
+        indicator ="\u2718"
+        board['3a'] = indicator
+        board['3b'] = dummy_piece
+        board['3c'] = indicator
+        chess_game.remove_potential_moves_indicator(potential_moves)
+        potential_moves.each { |move| result << board[move] }
+        expect(result).to eq(expected_result)
       end
     end
   end

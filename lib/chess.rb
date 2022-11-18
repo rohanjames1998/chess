@@ -47,18 +47,19 @@ class Chess
   end
 
   def get_player_move(player, piece)
-    display_potential_moves(piece)
+    potential_moves = board[piece].generate_potential_moves(piece, board)
+    display_potential_moves(potential_moves)
     loop do
       puts "\nEnter your move or 'x' to choose another piece:"
       move = get_input
       case
       when move == 'x'
         get_player_piece(player)
-        remove_potential_moves(piece)
+        remove_potential_moves(potential_moves)
         break
       when valid_move?(move)
         move_piece(piece, move)
-        remove_potential_moves(piece)
+        remove_potential_moves(potential_moves)
         break
       else
         puts "\n\033[31;1Invalid move\033[0m"
@@ -67,8 +68,7 @@ class Chess
     end
   end
 
-  def display_potential_moves(piece)
-    potential_moves = board[piece].generate_potential_moves(piece, board)
+  def display_potential_moves(potential_moves)
     indicator = "\u2718"
     potential_moves.each do |move|
       board[move] = indicator
@@ -89,6 +89,15 @@ class Chess
     # This method moves the piece to given location and removes it from the previous location
     board[move] = board[piece]
     board[piece] = ''
+  end
+
+  def remove_potential_moves_indicator(potential_moves)
+    indicator = "\u2718"
+    potential_moves.each do |move|
+      if board[move] == indicator
+      board[move] = ''
+      end
+    end
   end
 
   def display_valid_input_format
