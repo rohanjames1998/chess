@@ -3,14 +3,16 @@ require_relative '../lib/chess'
 describe Chess do
 
   subject(:chess_game) { described_class.new }
-  let(:player) { instance_double(Player) }
+  let(:player1) { instance_double(Player) }
+  let(:player2) { instance_double(Player) }
   let(:dummy_piece) { instance_double(Pawn) }
 
   before do
     # Removing all output statements from console.
     allow(STDOUT).to receive(:puts)
     chess_game.board.add_new_pieces_to_board
-    allow(player).to receive(:color).and_return('white')
+    allow(player1).to receive(:color).and_return('white')
+    allow(player2).to receive(:color).and_return('black')
     allow(dummy_piece).to receive(:color).and_return('white')
   end
 
@@ -18,47 +20,47 @@ describe Chess do
     context "When given location's format is valid" do
       it "returns true" do
         valid_loc = "2b"
-        returned_val = chess_game.valid_input?(valid_loc, player)
+        returned_val = chess_game.valid_input?(valid_loc, player1)
         expect(returned_val).to eq(true)
       end
     end
     context "When given location conforms to game standard but doesn't exist on the board" do
       it "returns false when location is too high" do
         high_loc = "1l"
-        returned_val = chess_game.valid_input?(high_loc, player)
+        returned_val = chess_game.valid_input?(high_loc, player1)
         expect(returned_val).to eq(false)
       end
 
       it "returns false when location is too low" do
         low_loc = "0c"
-        returned_val = chess_game.valid_input?(low_loc, player)
+        returned_val = chess_game.valid_input?(low_loc, player1)
         expect(returned_val).to eq(false)
       end
     end
     context "When location format is invalid" do
       it "returns false" do
       invalid_loc = "12a"
-      returned_val = chess_game.valid_input?(invalid_loc, player)
+      returned_val = chess_game.valid_input?(invalid_loc, player1)
       expect(returned_val).to eq(false)
       end
     end
     context "When player's color match the color of piece" do
       it "returns true" do
         input = '1b'
-        allow(player).to receive(:color).and_return('white')
+        allow(player1).to receive(:color).and_return('white')
         allow(chess_game.board).to receive(:[]).and_return(dummy_piece)
         allow(dummy_piece).to receive(:color).and_return('white')
-        returned_val = chess_game.valid_input?(input, player)
+        returned_val = chess_game.valid_input?(input, player1)
         expect(returned_val).to eq(true)
       end
     end
     context "When player's color don't match the color of piece" do
       it "returns false" do
         input = '1b'
-        allow(player).to receive(:color).and_return('white')
+        allow(player1).to receive(:color).and_return('white')
         allow(chess_game.board).to receive(:[]).and_return(dummy_piece)
         allow(dummy_piece).to receive(:color).and_return('black')
-        returned_val = chess_game.valid_input?(input, player)
+        returned_val = chess_game.valid_input?(input, player1)
         expect(returned_val).to eq(false)
       end
     end
@@ -73,7 +75,7 @@ describe Chess do
         valid_input = "1a"
         allow(chess_game).to receive(:gets).and_return(valid_input)
         expect(chess_game).to receive(:gets).once
-        chess_game.get_player_piece(player)
+        chess_game.get_player_piece(player1)
       end
     end
     context "When given invalid input" do
@@ -83,7 +85,7 @@ describe Chess do
         allow(chess_game.board).to receive(:[]).and_return(dummy_piece)
         allow(chess_game).to receive(:gets).and_return(invalid_input, valid_input)
         expect(chess_game).to receive(:gets).twice
-        chess_game.get_player_piece(player)
+        chess_game.get_player_piece(player1)
       end
     end
   end
@@ -132,7 +134,7 @@ describe Chess do
         piece_to_move = '2a'
         allow(chess_game).to receive(:valid_move?).and_return(true)
         expect(chess_game).to receive(:get_input).once
-        chess_game.get_player_move(player, piece_to_move)
+        chess_game.get_player_move(player1, piece_to_move)
       end
     end
     context "When player wants to choose another piece to move" do
@@ -143,8 +145,8 @@ describe Chess do
         allow(chess_game).to receive(:get_input).and_return(player_choice)
         allow(chess_game.board).to receive(:[]).and_return(dummy_piece)
         allow(dummy_piece).to receive(:generate_potential_moves)
-        expect(chess_game).to receive(:get_player_piece).once
-        chess_game.get_player_move(player, piece_to_move)
+        expect(chess_game).to receive(:round).once
+        chess_game.get_player_move(player1, piece_to_move)
       end
     end
     context "When given invalid move" do
@@ -152,7 +154,7 @@ describe Chess do
         piece_to_move = '1h'
         allow(chess_game).to receive(:valid_move?).and_return(false, false, true)
         expect(chess_game).to receive(:get_input).exactly(3).times
-        chess_game.get_player_move(player, piece_to_move)
+        chess_game.get_player_move(player1, piece_to_move)
       end
     end
   end
@@ -234,13 +236,13 @@ describe Chess do
         board['5a'] = indicator
         board['6a'] = indicator
         chess_game.remove_potential_moves_indicator(potential_moves)
-        result = potential_moves.all? { |move| board[move] == '' }
+        result = potential_moves.all? { |move| board[move] == ' ' }
         expect(result).to eq(true)
       end
       it "only removes indicators from the board and nothing else" do
         potential_moves = ['3a', '3b', '3c']
         board = chess_game.board
-        expected_result = ['', dummy_piece, '']
+        expected_result = [' ', dummy_piece, ' ']
         result = []
         indicator ="\u2718"
         board['3a'] = indicator
@@ -252,6 +254,19 @@ describe Chess do
       end
     end
   end
+
+  describe "#play_game" do
+    context "When game has ended" do
+      it "calls round on both player and breaks the loop" do
+        allow(chess_game).to receive(:get_player_move)
+        allow(chess_game).to receive(:get_player_piece)
+        allow(chess_game).to receive(:game_end).and_return(false, false, true)
+        expect(chess_game).to receive(:round).twice
+        chess_game.play_game(player1, player2)
+      end
+    end
+  end
+
 end
 
 
