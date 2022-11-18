@@ -141,6 +141,8 @@ describe Chess do
         player_choice = 'x'
         piece_to_move = '7h'
         allow(chess_game).to receive(:get_input).and_return(player_choice)
+        allow(chess_game.board).to receive(:[]).and_return(dummy_piece)
+        allow(dummy_piece).to receive(:generate_potential_moves)
         expect(chess_game).to receive(:get_player_piece).once
         chess_game.get_player_move(player, piece_to_move)
       end
@@ -158,14 +160,13 @@ describe Chess do
   describe "#display_potential_moves" do
 
     context "When called" do
-      it "adds indicator symbol on board where player can potentially move their piece" do
+      it "adds potential move indicator symbol on board where player can their piece" do
         indicator ="\u2718"
-        piece = '2a'
         potential_moves = ['4a', '3a']
         board = chess_game.board
-        allow(dummy_piece).to receive(:generate_potential_moves).and_return(potential_moves)
-        chess_game.display_potential_moves(piece)
-        expect(potential_moves.all? { |move| board[move] == indicator }).to eq(true)
+        chess_game.display_potential_moves(potential_moves)
+        result = potential_moves.all? { |move| board[move] == indicator }
+        expect(result).to eq(true)
       end
     end
   end
@@ -206,8 +207,6 @@ describe Chess do
   end
 
   describe "#move_piece" do
-    before do
-    end
     context "When called" do
       it "places the piece to given location" do
         piece = "2a"
@@ -225,9 +224,21 @@ describe Chess do
     end
   end
 
-
-
-
+  describe "#remove_potential_moves_indicator" do
+    context "When called" do
+      xit "Removes all potential move indicators from the board" do
+        potential_moves = ['4a', '5a', '6a']
+        board = chess_game.board
+        indicator ="\u2718"
+        board['4a'] = indicator
+        board['5a'] = indicator
+        board['6a'] = indicator
+        chess_game.remove_potential_moves_indicator(potential_moves)
+        result = potential_moves.all? { |move| board[move] == '' }
+        expect(result).to eq(true)
+      end
+    end
+  end
 end
 
 
