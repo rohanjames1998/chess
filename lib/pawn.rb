@@ -1,7 +1,9 @@
-# require_relative "board"
+require_relative "board"
 
 class Pawn
   attr_reader :unicode, :color
+
+  include Movement
 
   def initialize
     @unicode = ''
@@ -19,47 +21,33 @@ class Pawn
     @color = 'black'
   end
 
-  def generate_possible_moves(initial_loc, board)
-    # Since this method is hard coded and relies on other method for its main work
-    # we won't test it. Instead we will test #check_valid_move.
-    # converting both row and col to integers so we can increase or decrease them.
-    row = initial_loc[0].to_i
-    col = initial_loc[1].ord
-    normal_moves = []
-    kill_moves = []
-
-    if @first_move
-      normal_moves << (row + 2).to_s + col.chr
-      normal_moves << (row + 1).to_s + col.chr
-      kill_moves << (row + 1).to_s + (col + 1).chr
-      kill_moves << (row + 1).to_s + (col - 1).chr
-    else
-      normal_moves << (row + 1).to_s + col.chr
-      kill_moves << (row + 1).to_s + (col + 1).chr
-      kill_moves << (row + 1).to_s + (col - 1).chr
-    end
-
-    possible_moves = check_valid_move(normal_moves, kill_moves, board)
-    return possible_moves
+  def generate_potential_moves(initial_loc, board)
+    all_possible_moves = generate_pawn_moves(initial_loc, @first_move)
+    first_move_check
+    potential_moves = check_valid_moves(all_possible_moves, board)
+    return potential_moves
   end
 
-  def check_valid_moves(normal_moves, kill_moves, board)
-    possible_moves = []
+  def check_valid_moves(all_possible_moves, board)
+    potential_moves = []
+    normal_moves = all_possible_moves[0]
+    kill_moves = all_possible_moves[1]
+
     if normal_moves.length > 0
       normal_moves.each do |move|
-        possible_moves << move if board[move] == ''
+        potential_moves << move if board[move] == ''
       end
     end
 
     if kill_moves.length > 0
       kill_moves.each do |move|
-        # assigning the element at location to a variable
-        ele = board[move]
-        if ele != ''
-          possible_moves << move if ele.color != color
+        # assigning the piece on board to a variable
+        piece = board[move]
+        if piece != ''
+          potential_moves << move if piece.color != color
         end
       end
     end
-    possible_moves
+    potential_moves
   end
 end
