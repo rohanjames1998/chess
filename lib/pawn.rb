@@ -1,3 +1,4 @@
+require_relative "movement"
 require_relative "board"
 
 class Pawn
@@ -49,5 +50,12 @@ class Pawn
       end
     end
     potential_moves
+  end
+
+  def first_move_check
+    # Changing @first_move to false if it is true.
+    if @first_move
+      @first_move = false
+    end
   end
 end
