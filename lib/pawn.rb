@@ -23,10 +23,14 @@ class Pawn
   end
 
   def generate_potential_moves(initial_loc, board)
-    all_possible_moves = generate_pawn_moves(initial_loc, @first_move)
+    if self.color == 'white'
+      all_possible_moves = generate_white_pawn_moves(initial_loc, @first_move)
+    else
+      all_possible_moves = generate_black_pawn_moves(initial_loc, @first_move)
+    end
     first_move_check
     potential_moves = check_valid_moves(all_possible_moves, board)
-    return potential_moves
+    potential_moves
   end
 
   def check_valid_moves(all_possible_moves, board)

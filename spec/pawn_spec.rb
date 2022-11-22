@@ -87,6 +87,35 @@ describe Pawn do
       end
     end
   end
+
+  describe "#generate_possible_moves" do
+
+    before do
+      allow(pawn).to receive(:first_move).and_return(true)
+      allow(board).to receive(:[]).and_return('', '', dummy_piece)
+    end
+
+    context "When pawn's color is white" do
+      it "returns moves that a white pawn would make" do
+        initial_loc = '2b'
+        expected_moves = ['4b', '3b', '3c', '3a']
+        allow(dummy_piece).to receive(:color).and_return('black')
+        allow(pawn).to receive(:color).and_return('white')
+        result = pawn.generate_potential_moves(initial_loc, board)
+        expect(result).to eq(expected_moves)
+      end
+    end
+    context "When pawn's color is black" do
+      it "returns moves that a black pawn would make" do
+        initial_loc = '7b'
+        expected_moves = ['5b', '6b', '6c', '6a']
+        allow(pawn).to receive(:color).and_return('black')
+        allow(dummy_piece).to receive(:color).and_return('white')
+        result = pawn.generate_potential_moves(initial_loc, board)
+        expect(result).to eq(expected_moves)
+      end
+    end
+  end
 end
 
 

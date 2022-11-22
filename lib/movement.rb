@@ -3,7 +3,7 @@
 # Depending on the piece each move's validity is checked in their respective class.
 module Movement
 
-  def generate_pawn_moves(initial_loc, first_move)
+  def generate_white_pawn_moves(initial_loc, first_move)
     # This method provides all possible moves for a pawn it doesn't check
     # whether or not the moves are valid it. The only check this method performs is to check
     # for first move.
@@ -25,10 +25,32 @@ module Movement
     end
 
     moves = [normal_moves, kill_moves]
-    return moves
+    moves
   end
 
-  # These left right top down methods generate movements for rook and queen when they move vertically
+  def generate_black_pawn_moves(initial_loc, first_move)
+    row = initial_loc[0].to_i
+    col = initial_loc[1].ord
+    normal_moves = []
+    kill_moves = []
+
+    if first_move
+      normal_moves << (row - 2).to_s + col.chr
+      normal_moves << (row - 1).to_s + col.chr
+      kill_moves << (row - 1).to_s + (col + 1).chr
+      kill_moves << (row - 1).to_s + (col - 1).chr
+    else
+      normal_moves << (row - 1).to_s + col.chr
+      kill_moves << (row - 1).to_s + (col + 1).chr
+      kill_moves << (row - 1).to_s + (col - 1).chr
+    end
+
+    moves = [normal_moves, kill_moves]
+    moves
+  end
+
+
+  # These left, right, top, and down methods generate movements for rook and queen when they move vertically
   # or horizontally.
   def generate_left_moves(initial_loc, board)
     # Since we will only manipulate col there is no need to convert
@@ -142,6 +164,7 @@ module Movement
 
   # top_right, top_left, down_right, and down_left are all generate
   # diagonal movements for bishop and queen.
+
   def generate_top_right_moves(initial_loc, board)
     valid_moves = []
     row = initial_loc[0].to_i
