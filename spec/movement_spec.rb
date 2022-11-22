@@ -194,6 +194,64 @@ describe Movement do
       end
     end
   end
+
+  describe "#generate_knight_moves" do
+    context "When called" do
+      it "returns total of 8 moves" do
+        initial_loc = '3a'
+        moves = dummy_class.generate_knight_moves(initial_loc)
+        expect(moves.length).to eq(8)
+      end
+      it "returns a move for top left" do
+        initial_loc = '4d'
+        top_left = '6c'
+        moves = dummy_class.generate_knight_moves(initial_loc)
+        expect(moves[0]).to eq(top_left)
+      end
+      it "returns a move for top right" do
+        initial_loc = '4d'
+        top_right = '6e'
+        moves = dummy_class.generate_knight_moves(initial_loc)
+        expect(moves[1]).to eq(top_right)
+      end
+      it "returns a move for down left" do
+        initial_loc = '3f'
+        down_left = '1e'
+        moves = dummy_class.generate_knight_moves(initial_loc)
+        expect(moves[2]).to eq(down_left)
+      end
+      it "returns a move for down right" do
+        initial_loc = '3f'
+        down_right = '1g'
+        moves = dummy_class.generate_knight_moves(initial_loc)
+        expect(moves[3]).to eq(down_right)
+      end
+      it "returns a move for right right up" do
+        initial_loc = '5e'
+        right_right_up = '6g'
+        moves = dummy_class.generate_knight_moves(initial_loc)
+        expect(moves[4]).to eq(right_right_up)
+      end
+      it "returns a move for left left up" do
+        initial_loc = '5e'
+        left_left_up = '6c'
+        moves = dummy_class.generate_knight_moves(initial_loc)
+        expect(moves[5]).to eq(left_left_up)
+      end
+      it "returns a move for right right down" do
+        initial_loc = '4f'
+        right_right_down = '3h'
+        moves = dummy_class.generate_knight_moves(initial_loc)
+        expect(moves[6]).to eq(right_right_down)
+      end
+      it "returns a move for left left down" do
+        initial_loc = '4f'
+        left_left_down = '3d'
+        moves = dummy_class.generate_knight_moves(initial_loc)
+        expect(moves[7]).to eq(left_left_down)
+      end
+    end
+  end
 end
 
 

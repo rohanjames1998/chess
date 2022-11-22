@@ -47,7 +47,7 @@ module Movement
       when board[potential_move].color != color # For enemy piece
         potential_left_moves << potential_move
         break
-      else # For ally piece
+      else # For ally piece and moves outside board
         break
       end
     end
@@ -69,7 +69,7 @@ module Movement
       when board[potential_move].color != color # For enemy piece
         potential_right_moves << potential_move
         break
-      else # For ally piece
+      else # For ally piece and moves outside board
         break
       end
     end
@@ -122,6 +122,23 @@ module Movement
       end
     end
     potential_down_moves
+  end
+
+  def generate_knight_moves(initial_loc)
+
+    row = initial_loc[0].to_i
+    col = initial_loc[1].ord
+    all_moves = []
+    all_moves << (row + 2).to_s + (col - 1).chr #up-up-left
+    all_moves << (row + 2).to_s + (col + 1).chr #up-up-right
+    all_moves << (row - 2).to_s + (col - 1).chr #down-down-left
+    all_moves << (row - 2).to_s + (col + 1).chr #down-down-right
+    all_moves << (row + 1).to_s + (col + 2).chr #right-right-up
+    all_moves << (row + 1).to_s + (col - 2).chr #left-left-up
+    all_moves << (row - 1).to_s + (col + 2).chr #right-right-down
+    all_moves << (row - 1).to_s + (col - 2).chr #left-left-down
+
+    return all_moves
   end
 
 
