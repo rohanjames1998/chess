@@ -137,9 +137,104 @@ module Movement
     all_moves << (row + 1).to_s + (col - 2).chr #left-left-up
     all_moves << (row - 1).to_s + (col + 2).chr #right-right-down
     all_moves << (row - 1).to_s + (col - 2).chr #left-left-down
-
     return all_moves
   end
 
+  # top_right, top_left, down_right, and down_left are all generate
+  # diagonal movements for bishop and queen.
+  def generate_top_right_moves(initial_loc, board)
+    valid_moves = []
+    row = initial_loc[0].to_i
+    col = initial_loc[1].ord - 97
 
+    while row < 8 && col < 7
+      row += 1
+      col += 1
+      # Converting col back to alphabet by adding 97.
+      potential_move = row.to_s + (col + 97).chr
+      piece = board[potential_move]
+      case
+      when piece == '' # For empty location.
+        valid_moves << potential_move
+      when piece.color != color # For enemy piece.
+        valid_moves << potential_move
+        break
+      else # For ally piece.
+        break
+      end
+    end
+    valid_moves
+  end
+
+  def generate_top_left_moves(initial_loc, board)
+    valid_moves = []
+    row = initial_loc[0].to_i
+    col = initial_loc[1].ord - 97
+
+    while row < 8 && col > 0
+      row += 1
+      col -= 1
+      # Converting col back to alphabet by adding 97.
+      potential_move = row.to_s + (col + 97).chr
+      piece = board[potential_move]
+      case
+      when piece == '' # For empty location.
+        valid_moves << potential_move
+      when piece.color != color # For enemy piece.
+        valid_moves << potential_move
+        break
+      else # For ally piece.
+        break
+      end
+    end
+    valid_moves
+  end
+
+  def generate_down_right_moves(initial_loc, board)
+    valid_moves = []
+    row = initial_loc[0].to_i
+    col = initial_loc[1].ord - 97
+
+    while row > 1 && col < 7
+      row -= 1
+      col += 1
+      # Converting col back to alphabet by adding 97.
+      potential_move = row.to_s + (col + 97).chr
+      piece = board[potential_move]
+      case
+      when piece == '' # For empty location.
+        valid_moves << potential_move
+      when piece.color != color # For enemy piece.
+        valid_moves << potential_move
+        break
+      else # For ally piece.
+        break
+      end
+    end
+    valid_moves
+  end
+
+  def generate_down_left_moves(initial_loc, board)
+    valid_moves = []
+    row = initial_loc[0].to_i
+    col = initial_loc[1].ord - 97
+
+    while row >= 0 && col > 0
+      row -= 1
+      col -= 1
+      # Converting col back to alphabet by adding 97.
+      potential_move = row.to_s + (col + 97).chr
+      piece = board[potential_move]
+      case
+      when piece == '' # For empty location.
+        valid_moves << potential_move
+      when piece.color != color # For enemy piece.
+        valid_moves << potential_move
+        break
+      else # For ally piece.
+        break
+      end
+    end
+    valid_moves
+  end
 end
