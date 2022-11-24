@@ -434,4 +434,36 @@ describe Movement do
       end
     end
   end
+
+  describe "#generate_king_moves" do
+    context "When all moves are empty" do
+      it "returns all moves" do
+        initial_loc = '4d'
+        expected_result = ['5c', '5d', '5e', '4c', '4e', '3c', '3d', '3e']
+        allow(board).to receive(:[]).and_return('')
+        potential_moves = dummy_class.generate_king_moves(initial_loc, board)
+        expect(potential_moves).to eq(expected_result)
+      end
+    end
+    context "When there is an ally blocking its way" do
+      it "returns only the empty moves" do
+        initial_loc = '6g'
+        expected_result = ['7f', '7g']
+        allow(board).to receive(:[]).and_return('', '', dummy_piece)
+        allow(dummy_piece).to receive(:color).and_return('white')
+        potential_moves = dummy_class.generate_king_moves(initial_loc, board)
+        expect(potential_moves).to eq(expected_result)
+      end
+    end
+    context "When there is an enemy on its way" do
+      it "returns all valid moves including enemy's locations" do
+        initial_loc = '4d'
+        expected_result = ['5c', '5d', '5e', '4c', '4e', '3c', '3d', '3e']
+        allow(board).to receive(:[]).and_return('', '', '', '', '', dummy_piece)
+        allow(dummy_piece).to receive(:color).and_return('black')
+        potential_moves = dummy_class.generate_king_moves(initial_loc, board)
+        expect(potential_moves).to eq(expected_moves)
+      end
+    end
+  end
 end
