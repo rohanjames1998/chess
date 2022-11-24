@@ -206,7 +206,7 @@ module Movement
       when piece.color != color # For enemy piece.
         valid_moves << potential_move
         break
-      else # For ally piece.
+      else # For ally piece or board end.
         break
       end
     end
@@ -256,6 +256,34 @@ module Movement
         break
       else # For ally piece.
         break
+      end
+    end
+    valid_moves
+  end
+
+  def generate_king_moves(initial_loc, board, color)
+    row = initial_loc[0].to_i
+    col = initial_loc[1].ord
+    valid_moves = []
+    potential_moves = []
+    potential_moves << (row + 1).to_s + (col - 1).chr #top-left
+    potential_moves << (row + 1).to_s + col.chr # top
+    potential_moves << (row + 1).to_s + (col + 1).chr #top-left
+    potential_moves << row.to_s + (col - 1).chr #left
+    potential_moves << row.to_s + (col + 1).chr # right
+    potential_moves << (row - 1).to_s + (col - 1).chr #down-left
+    potential_moves << (row - 1).to_s + col.chr #down
+    potential_moves << (row - 1).to_s + (col + 1).chr #down-right
+
+    potential_moves.each do |move|
+      piece = board[move]
+      case
+      when piece == '' #For empty locations.
+        valid_moves << move
+      when piece.color != color #For enemy pieces.
+        valid_moves << move
+      else #For ally pieces or out of board moves.
+        next
       end
     end
     valid_moves
