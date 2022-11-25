@@ -52,7 +52,7 @@ module Movement
 
   # These left, right, top, and down methods generate movements for rook and queen when they move vertically
   # or horizontally.
-  def generate_left_moves(initial_loc, board)
+  def generate_left_moves(initial_loc, board, color)
     # Since we will only manipulate col there is no need to convert
     # row into an integer.
     row = initial_loc[0]
@@ -76,7 +76,7 @@ module Movement
     potential_left_moves
   end
 
-  def generate_right_moves(initial_loc, board)
+  def generate_right_moves(initial_loc, board, color)
     row = initial_loc[0]
     col = initial_loc[1].ord - 97
     potential_right_moves = []
@@ -98,7 +98,7 @@ module Movement
     potential_right_moves
   end
 
-  def generate_up_moves(initial_loc, board)
+  def generate_up_moves(initial_loc, board, color)
     # Since we won't manipulate col we will not convert it to integer.
     row = initial_loc[0].to_i
     col = initial_loc[1]
@@ -122,7 +122,7 @@ module Movement
     potential_top_moves
   end
 
-  def generate_down_moves(initial_loc, board)
+  def generate_down_moves(initial_loc, board, color)
     # Since we won't manipulate col we will not convert it to integer.
     row = initial_loc[0].to_i
     col = initial_loc[1]
@@ -165,7 +165,7 @@ module Movement
   # top_right, top_left, down_right, and down_left are all generate
   # diagonal movements for bishop and queen.
 
-  def generate_top_right_moves(initial_loc, board)
+  def generate_top_right_moves(initial_loc, board, color)
     valid_moves = []
     row = initial_loc[0].to_i
     col = initial_loc[1].ord - 97
@@ -189,7 +189,7 @@ module Movement
     valid_moves
   end
 
-  def generate_top_left_moves(initial_loc, board)
+  def generate_top_left_moves(initial_loc, board, color)
     valid_moves = []
     row = initial_loc[0].to_i
     col = initial_loc[1].ord - 97
@@ -213,7 +213,7 @@ module Movement
     valid_moves
   end
 
-  def generate_down_right_moves(initial_loc, board)
+  def generate_down_right_moves(initial_loc, board, color)
     valid_moves = []
     row = initial_loc[0].to_i
     col = initial_loc[1].ord - 97
@@ -237,7 +237,7 @@ module Movement
     valid_moves
   end
 
-  def generate_down_left_moves(initial_loc, board)
+  def generate_down_left_moves(initial_loc, board, color)
     valid_moves = []
     row = initial_loc[0].to_i
     col = initial_loc[1].ord - 97
