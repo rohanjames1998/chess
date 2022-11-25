@@ -4,9 +4,9 @@
 module Movement
 
   def generate_white_pawn_moves(initial_loc, first_move)
-    # This method provides all possible moves for a pawn it doesn't check
-    # whether or not the moves are valid it. The only check this method performs is to check
-    # for first move.
+    # This method provides all possible moves for a pawn.
+    # It doesn't check whether or not the moves are valid it.
+    # The only check this method performs is to check for first move.
 
     row = initial_loc[0].to_i
     col = initial_loc[1].ord
@@ -50,8 +50,7 @@ module Movement
   end
 
 
-  # These left, right, top, and down methods generate movements for rook and queen when they move vertically
-  # or horizontally.
+  # These left, right, top, and down methods generate movements for rook and queen when they move vertically or horizontally.
   def generate_left_moves(initial_loc, board, color)
     # Since we will only manipulate col there is no need to convert
     # row into an integer.
@@ -162,7 +161,7 @@ module Movement
     return all_moves
   end
 
-  # top_right, top_left, down_right, and down_left are all generate
+  # top_right, top_left, down_right, and down_left all generate
   # diagonal movements for bishop and queen.
 
   def generate_top_right_moves(initial_loc, board, color)
@@ -261,31 +260,18 @@ module Movement
     valid_moves
   end
 
-  def generate_king_moves(initial_loc, board, color)
+  def generate_king_moves(initial_loc)
     row = initial_loc[0].to_i
     col = initial_loc[1].ord
-    valid_moves = []
     potential_moves = []
     potential_moves << (row + 1).to_s + (col - 1).chr #top-left
     potential_moves << (row + 1).to_s + col.chr # top
-    potential_moves << (row + 1).to_s + (col + 1).chr #top-left
+    potential_moves << (row + 1).to_s + (col + 1).chr #top-right
     potential_moves << row.to_s + (col - 1).chr #left
     potential_moves << row.to_s + (col + 1).chr # right
     potential_moves << (row - 1).to_s + (col - 1).chr #down-left
     potential_moves << (row - 1).to_s + col.chr #down
     potential_moves << (row - 1).to_s + (col + 1).chr #down-right
-
-    potential_moves.each do |move|
-      piece = board[move]
-      case
-      when piece == '' #For empty locations.
-        valid_moves << move
-      when piece.color != color #For enemy pieces.
-        valid_moves << move
-      else #For ally pieces or out of board moves.
-        next
-      end
-    end
-    valid_moves
+    potential_moves
   end
 end

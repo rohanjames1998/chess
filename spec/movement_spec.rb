@@ -323,29 +323,32 @@ describe Movement do
     context 'When all top right moves are empty' do
       it 'returns all valid top-right moves upto board end' do
         initial_loc = '1c'
+        color = 'white'
         expected_result = ['2d', '3e', '4f', '5g', '6h']
         allow(board).to receive(:[]).and_return('')
-        potential_moves = dummy_class.generate_top_right_moves(initial_loc, board)
+        potential_moves = dummy_class.generate_top_right_moves(initial_loc, board, color)
         expect(potential_moves).to eq(expected_result)
       end
     end
     context 'When an ally is blocking its way' do
       it 'returns all valid moves top-right upto ally' do
         initial_loc = '3e'
+        color = 'white'
         expected_result = ['4f', '5g']
         allow(board).to receive(:[]).and_return('', '', dummy_piece)
         allow(dummy_piece).to receive(:color).and_return('white')
-        potential_moves = dummy_class.generate_top_right_moves(initial_loc, board)
+        potential_moves = dummy_class.generate_top_right_moves(initial_loc, board, color)
         expect(potential_moves).to eq(expected_result)
       end
     end
     context 'When an enemy is in its way' do
       it 'returns all top-right moves upto and including enemy\'s location' do
         initial_loc = '1c'
+        color = 'white'
         expected_result = ['2d', '3e', '4f']
         allow(board).to receive(:[]).and_return('', '', dummy_piece)
         allow(dummy_piece).to receive(:color).and_return('black')
-        potential_moves = dummy_class.generate_top_right_moves(initial_loc, board)
+        potential_moves = dummy_class.generate_top_right_moves(initial_loc, board, color)
         expect(potential_moves).to eq(expected_result)
       end
     end
@@ -355,29 +358,32 @@ describe Movement do
     context 'When all top-left moves are empty' do
       it 'returns all valid top-left moves upto board end' do
         initial_loc = '1f'
+        color = 'white'
         expected_result = ['2e', '3d', '4c', '5b', '6a']
         allow(board).to receive(:[]).and_return('')
-        potential_moves = dummy_class.generate_top_left_moves(initial_loc, board)
+        potential_moves = dummy_class.generate_top_left_moves(initial_loc, board, color)
         expect(potential_moves).to eq(expected_result)
       end
     end
     context 'When there is an ally blocking its way' do
       it 'returns all top-left valid moves upto ally piece' do
         initial_loc = '1f'
+        color = 'white'
         expected_result = ['2e', '3d']
         allow(board).to receive(:[]).and_return('', '', dummy_piece)
         allow(dummy_piece).to receive(:color).and_return('white')
-        potential_moves = dummy_class.generate_top_left_moves(initial_loc, board)
+        potential_moves = dummy_class.generate_top_left_moves(initial_loc, board, color)
         expect(potential_moves).to eq(expected_result)
       end
     end
     context 'When there is an enemy in its way' do
       it 'returns all top-left moves upto and including enemy\'s location' do
         initial_loc = '1f'
+        color = 'white'
         expected_result = ['2e', '3d', '4c']
         allow(board).to receive(:[]).and_return('', '', dummy_piece)
         allow(dummy_piece).to receive(:color).and_return('black')
-        potential_moves = dummy_class.generate_top_left_moves(initial_loc, board)
+        potential_moves = dummy_class.generate_top_left_moves(initial_loc, board, color)
         expect(potential_moves).to eq(expected_result)
       end
     end
@@ -387,9 +393,10 @@ describe Movement do
     context 'When all down-right moves are empty' do
       it 'returns all valid down-right moves' do
         initial_loc = '8c'
+        color = 'white'
         expected_result = ['7d', '6e', '5f', '4g', '3h']
         allow(board).to receive(:[]).and_return('')
-        potential_moves = dummy_class.generate_down_right_moves(initial_loc, board)
+        potential_moves = dummy_class.generate_down_right_moves(initial_loc, board, color)
         expect(potential_moves).to eq(expected_result)
       end
     end
@@ -397,9 +404,10 @@ describe Movement do
       it 'returns all down-right valid moves upto ally' do
         initial_loc = '8c'
         expected_result = ['7d', '6e']
+        color = 'white'
         allow(board).to receive(:[]).and_return('', '', dummy_piece)
         allow(dummy_piece).to receive(:color).and_return('white')
-        potential_moves = dummy_class.generate_down_right_moves(initial_loc, board)
+        potential_moves = dummy_class.generate_down_right_moves(initial_loc, board, color)
         expect(potential_moves).to eq(expected_result)
       end
     end
@@ -407,9 +415,10 @@ describe Movement do
       it 'returns all down-right valid moves upto and including enemy\'s location' do
         initial_loc = '7d'
         expected_result = ['6e', '5f', '4g']
+        color = 'white'
         allow(board).to receive(:[]).and_return('', '', dummy_piece)
         allow(dummy_piece).to receive(:color).and_return('black')
-        potential_moves = dummy_class.generate_down_right_moves(initial_loc, board)
+        potential_moves = dummy_class.generate_down_right_moves(initial_loc, board, color)
         expect(potential_moves).to eq(expected_result)
       end
     end
@@ -419,9 +428,10 @@ describe Movement do
     context 'When all down-left moves are empty' do
       it 'returns all down-left valid moves' do
         initial_loc = '8f'
+        color = 'white'
         expected_result = ['7e', '6d', '5c', '4b', '3a']
         allow(board).to receive(:[]).and_return('')
-        potential_moves = dummy_class.generate_down_left_moves(initial_loc, board)
+        potential_moves = dummy_class.generate_down_left_moves(initial_loc, board, color)
         expect(potential_moves).to eq(expected_result)
       end
     end
@@ -429,9 +439,10 @@ describe Movement do
       it 'returns all valid down-left moves upto ally' do
         initial_loc = '7e'
         expected_result = ['6d', '5c']
+        color = 'white'
         allow(board).to receive(:[]).and_return('', '', dummy_piece)
         allow(dummy_piece).to receive(:color).and_return('white')
-        potential_moves = dummy_class.generate_down_left_moves(initial_loc, board)
+        potential_moves = dummy_class.generate_down_left_moves(initial_loc, board, color)
         expect(potential_moves).to eq(expected_result)
       end
     end
@@ -439,47 +450,49 @@ describe Movement do
       it 'returns all valid down-left moves upto and including enemy\'s location' do
         initial_loc = '4d'
         expected_result = ['3c', '2b', '1a']
+        color = 'white'
         allow(board).to receive(:[]).and_return('', '', dummy_piece)
         allow(dummy_piece).to receive(:color).and_return('black')
-        potential_moves = dummy_class.generate_down_left_moves(initial_loc, board)
+        potential_moves = dummy_class.generate_down_left_moves(initial_loc, board, color)
         expect(potential_moves).to eq(expected_result)
       end
     end
   end
 
   describe "#generate_king_moves" do
-    let(:king) { instance_double(King) }
-
-    context "When all moves are empty" do
-      it "returns all moves" do
-        initial_loc = '4d'
-        color = 'white'
-        expected_result = ['5c', '5d', '5e', '4c', '4e', '3c', '3d', '3e']
-        allow(board).to receive(:[]).and_return('')
-        potential_moves = dummy_class.generate_king_moves(initial_loc, board, color)
-        expect(potential_moves).to eq(expected_result)
+    context "When called" do
+      it "generates total of 8 moves" do
+        initial_loc = '5d'
+        moves = dummy_class.generate_king_moves(initial_loc)
+        expect(moves.length).to eq(8)
       end
-    end
-    context "When there is an ally blocking its way" do
-      it "returns only the empty moves" do
-        initial_loc = '4d'
-        color = 'white'
-        expected_result = ['5c', '5d']
-        allow(board).to receive(:[]).and_return('', '', dummy_piece)
-        allow(dummy_piece).to receive(:color).and_return('white')
-        potential_moves = dummy_class.generate_king_moves(initial_loc, board, color)
-        expect(potential_moves).to eq(expected_result)
+      it "returns 3 forward moves" do
+        initial_loc = '3d'
+        moves = dummy_class.generate_king_moves(initial_loc)
+        top_left = moves[0]
+        top = moves[1]
+        top_right = moves[2]
+        expect(top_left).to eq('4c')
+        expect(top).to eq('4d')
+        expect(top_right).to eq('4e')
       end
-    end
-    context "When there is an enemy on its way" do
-      it "returns all valid moves including enemy's locations" do
-        initial_loc = '4d'
-        color = 'white'
-        expected_result = ['5c', '5d', '5e', '4c', '4e', '3c', '3d', '3e']
-        allow(board).to receive(:[]).and_return('', '', '', '', '', dummy_piece)
-        allow(dummy_piece).to receive(:color).and_return('black')
-        potential_moves = dummy_class.generate_king_moves(initial_loc, board, color)
-        expect(potential_moves).to eq(expected_result)
+      it "returns left and right moves" do
+        initial_loc = '6c'
+        moves = dummy_class.generate_king_moves(initial_loc)
+        left = moves[3]
+        right = moves[4]
+        expect(left).to eq('6b')
+        expect(right).to eq('6d')
+      end
+      it "returns 3 backward moves" do
+        initial_loc = '4f'
+        moves = dummy_class.generate_king_moves(initial_loc)
+        down_left = moves[5]
+        down = moves[6]
+        down_right = moves[7]
+        expect(down_left).to eq('3e')
+        expect(down).to eq('3f')
+        expect(down_right).to eq('3g')
       end
     end
   end
