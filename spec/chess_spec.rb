@@ -17,40 +17,74 @@ describe Chess do
   end
 
   describe "#valid_input?" do
+    context "When given valid input" do
+      it "returns true" do
+        valid_loc = '3c'
+        allow(chess_game).to receive(:valid_format?).and_return(true)
+        allow(chess_game).to receive(:valid_choice?).and_return(true)
+        result = chess_game.valid_input?(valid_loc, player1)
+        expect(result).to eq(true)
+      end
+    end
+    context "When format is invalid" do
+      it "returns false" do
+        invalid_format = "a6"
+        allow(chess_game).to receive(:valid_format?).and_return(false)
+        allow(chess_game).to receive(:valid_choice?).and_return(false)
+        result = chess_game.valid_input?(invalid_format, player1)
+        expect(result).to eq(false)
+      end
+    end
+    context "When format is valid but color doesn't match" do
+      it "returns false" do
+        invalid_choice = '7c'
+        allow(chess_game).to receive(:valid_format?).and_return(true)
+        allow(chess_game).to receive(:valid_choice?).and_return(false)
+        result = chess_game.valid_input?(invalid_choice, player1)
+        expect(result).to eq(false)
+      end
+    end
+  end
+
+
+  describe "#valid_format?" do
     context "When given location's format is valid" do
       it "returns true" do
         valid_loc = "2b"
-        returned_val = chess_game.valid_input?(valid_loc, player1)
+        returned_val = chess_game.valid_format?(valid_loc)
         expect(returned_val).to eq(true)
       end
     end
     context "When given location conforms to game standard but doesn't exist on the board" do
       it "returns false when location is too high" do
         high_loc = "1l"
-        returned_val = chess_game.valid_input?(high_loc, player1)
+        returned_val = chess_game.valid_format?(high_loc)
         expect(returned_val).to eq(false)
       end
 
       it "returns false when location is too low" do
         low_loc = "0c"
-        returned_val = chess_game.valid_input?(low_loc, player1)
+        returned_val = chess_game.valid_format?(low_loc)
         expect(returned_val).to eq(false)
       end
     end
     context "When location format is invalid" do
       it "returns false" do
       invalid_loc = "12a"
-      returned_val = chess_game.valid_input?(invalid_loc, player1)
+      returned_val = chess_game.valid_format?(invalid_loc)
       expect(returned_val).to eq(false)
       end
     end
+  end
+
+  describe "valid_choice?" do
     context "When player's color match the color of piece" do
       it "returns true" do
         input = '1b'
         allow(player1).to receive(:color).and_return('white')
         allow(chess_game.board).to receive(:[]).and_return(dummy_piece)
         allow(dummy_piece).to receive(:color).and_return('white')
-        returned_val = chess_game.valid_input?(input, player1)
+        returned_val = chess_game.valid_choice?(input, player1)
         expect(returned_val).to eq(true)
       end
     end
@@ -60,11 +94,12 @@ describe Chess do
         allow(player1).to receive(:color).and_return('white')
         allow(chess_game.board).to receive(:[]).and_return(dummy_piece)
         allow(dummy_piece).to receive(:color).and_return('black')
-        returned_val = chess_game.valid_input?(input, player1)
+        returned_val = chess_game.valid_choice?(input, player1)
         expect(returned_val).to eq(false)
       end
     end
   end
+
 
   describe "#get_player_piece" do
     before do
@@ -181,6 +216,7 @@ describe Chess do
       it "returns false" do
         piece = '2a'
         invalid_move = '9i'
+        allow(chess_game).to receive(:valid_format?).and_return(false)
         allow(dummy_piece).to receive(:generate_potential_moves)
         returned_val = chess_game.valid_move?(invalid_move, piece)
         expect(returned_val).to eq(false)

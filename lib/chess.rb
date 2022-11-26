@@ -2,8 +2,7 @@ require_relative 'player'
 require_relative 'board'
 
 class Chess
-
-  attr_reader :board, :game_end
+  attr_reader :board, :game_end, :p1, :p2
 
   def initialize
     @p1 = Player.new
@@ -12,11 +11,15 @@ class Chess
     @game_end = false
   end
 
-  def play_game(player1=p1, player2=p2)
+  def play_game(player1 = p1, player2 = p2)
     loop do
       break if game_end == true
+
+      board.display_chess
       round(player1)
       break if game_end == true
+
+      board.display_chess
       round(player2)
     end
   end
@@ -27,12 +30,30 @@ class Chess
   end
 
   def valid_input?(coordinates, player)
-    row = coordinates[0]
-    col = coordinates[1].downcase
-    if /[1-8]$/.match(row) && /[a-h]$/.match(col) && board[coordinates].color == player.color
+    if valid_format?(coordinates) && valid_choice?(coordinates, player)
       return true
     end
+
     display_valid_input_format
+    return false
+  end
+
+  def valid_format?(loc)
+    row = loc[0]
+    col = loc[1].downcase
+    if /[1-8]$/.match(row) && /[a-h]$/.match(col)
+      return true
+    end
+
+    return false
+  end
+
+  # This method checks if player color matches the color of the piece.
+  def valid_choice?(loc, player)
+    if board[loc].color == player.color
+      return true
+    end
+
     return false
   end
 
@@ -91,12 +112,11 @@ class Chess
   end
 
   def valid_move?(move, piece)
-    row = move[0]
-    col = move[1].downcase
     potential_moves = board[piece].generate_potential_moves(piece, board)
-    if /[1-8]$/.match(row) && /[a-h]$/.match(col) && potential_moves.include?(move)
+    if valid_format?(move) && potential_moves.include?(move)
       return true
     end
+
     return false
   end
 
@@ -110,7 +130,7 @@ class Chess
     indicator = "\u2718"
     potential_moves.each do |move|
       if board[move] == indicator
-      board[move] = ' '
+        board[move] = ' '
       end
     end
   end
