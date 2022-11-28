@@ -6,6 +6,7 @@ describe Chess do
   let(:player1) { instance_double(Player) }
   let(:player2) { instance_double(Player) }
   let(:dummy_piece) { instance_double(Pawn) }
+  let(:king) { instance_double(King) }
 
   before do
     # Removing all output statements from console.
@@ -245,19 +246,33 @@ describe Chess do
   end
 
   describe "#move_piece" do
+
+    before do
+      allow(chess_game.board).to receive(:is_a?).and_return(false)
+    end
+
     context "When called" do
       it "places the piece to given location" do
         piece = "2a"
         move = "3a"
         chess_game.board[piece] = dummy_piece
-        chess_game.move_piece(move, piece)
+        chess_game.move_piece(move, piece, player1)
         expect(chess_game.board['3a']).to eq(dummy_piece)
       end
       it "removes piece from its previous location" do
         piece = "6c"
         move = "5c"
-        chess_game.move_piece(move, piece)
+        chess_game.move_piece(move, piece, player1)
         expect(chess_game.board[move]).to eq('')
+      end
+    end
+    context "When player chooses to move the king" do
+      it "sets player's king_loc to move location" do
+        piece = '1e'
+        move = '2e'
+        allow(chess_game.board).to receive(:is_a?).and_return(true)
+        expect(player1).to receive(:king_loc=).with(move).once
+        chess_game.move_piece(move, piece, player1)
       end
     end
   end
@@ -295,6 +310,8 @@ describe Chess do
     context "When game has ended" do
       it "calls round on both player and breaks the loop" do
         allow(chess_game).to receive(:get_player_move)
+        allow(chess_game).to receive(:check?)
+        allow(chess_game).to receive(:checkmate)
         allow(chess_game).to receive(:get_player_piece)
         allow(chess_game).to receive(:game_end).and_return(false, false, true)
         expect(chess_game).to receive(:round).twice
@@ -303,6 +320,50 @@ describe Chess do
     end
   end
 
+  describe "#check?" do
+    context "When player's king is under immediate threat" do
+      it "returns true" do
+        board = chess_game.board
+        allow(player1).to receive(:king_loc).and_return('1e')
+        allow(board).to receive(:[]).and_return(king)
+        allow(king).to receive(:clear?).and_return(false)
+        result = chess_game.check?(player1, board)
+        expect(result).to eq(true)
+      end
+    end
+    context "When player's king is not under immediate threat" do
+      it "returns false" do
+        board = chess_game.board
+        allow(player1).to receive(:king_loc).and_return('1e')
+        allow(board).to receive(:[]).and_return(king)
+        allow(king).to receive(:clear?).and_return(true)
+        result = chess_game.check?(player1, board)
+        expect(result).to eq(false)
+      end
+    end
+  end
+
+  describe "#checkmate" do
+    context "When player failed to save their king after their round" do
+      it "changes game_end to true" do
+        loser = player1
+        winner = player2
+        allow(player2).to receive(:name)
+        allow(chess_game).to receive(:check?).and_return(true)
+        chess_game.checkmate(loser, winner)
+        expect(chess_game.game_end).to eq(true)
+      end
+    end
+    context "When the king is safe after round is over" do
+      it "doesn't change game_end at all" do
+        loser = player1
+        winner = player2
+        allow(chess_game).to receive(:check?).and_return(false)
+        expect(chess_game).not_to receive(:game_end=)
+        chess_game.checkmate(loser, winner)
+      end
+    end
+  end
 end
 
 
