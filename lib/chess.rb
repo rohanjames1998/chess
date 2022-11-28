@@ -11,20 +11,30 @@ class Chess
     @game_end = false
   end
 
+  def start_game
+    p1.white
+    p2.black
+    board.add_new_pieces_to_board
+  end
+
   def play_game(player1 = p1, player2 = p2)
     loop do
       break if game_end == true
-
       board.display_chess
       round(player1)
+      checkmate(player1, player2)
       break if game_end == true
-
       board.display_chess
       round(player2)
+      checkmate(player2, player1)
     end
   end
 
   def round(player)
+    if check?(player, board)
+      puts "#{player.name} your king is under threat!!",
+           "Save your king or type quit to end the game."
+    end
     piece_to_move = get_player_piece(player)
     get_player_move(player, piece_to_move)
   end
@@ -66,6 +76,8 @@ class Chess
       # This conditional checks whether the given input is valid && there is a piece present at the given
       # location
       case
+      when input == 'quit'
+        return 'quit'
       when valid_input?(input, player) && board[input] == " "
         print "The location you entered has no chess piece."
         next
@@ -83,6 +95,9 @@ class Chess
   end
 
   def get_player_move(player, piece)
+    # If player wants to quit the game while choosing their piece
+    # this function wont run
+    return if piece == 'quit'
     potential_moves = board[piece].generate_potential_moves(piece, board)
     display_potential_moves(potential_moves)
     loop do
@@ -94,7 +109,7 @@ class Chess
         remove_potential_moves(potential_moves)
         break
       when valid_move?(move)
-        move_piece(piece, move)
+        move_piece(piece, move, player)
         remove_potential_moves(potential_moves)
         break
       else
@@ -116,14 +131,21 @@ class Chess
     if valid_format?(move) && potential_moves.include?(move)
       return true
     end
-
     return false
   end
 
-  def move_piece(move, piece)
+  def move_piece(move, piece, player)
     # This method moves the piece to given location and removes it from the previous location
-    board[move] = board[piece]
-    board[piece] = ' '
+    # Also if player chooses to move their king it changes player.king_loc to new location
+    # so we can track where the king's location for #check? and #checkmate?
+    if board[piece].is_a?(King)
+      board[move] = board[piece]
+      player.king_loc = move
+      board[piece] = ' '
+    else
+      board[move] = board[piece]
+      board[piece] = ' '
+    end
   end
 
   def remove_potential_moves_indicator(potential_moves)
@@ -141,5 +163,27 @@ class Chess
          "1a",
          "Where '1' is the row and 'a' is the column of the board.",
          "\033[31mRemember your row cannot be greater than 8 and your column cannot be any alphabet higher than 'h'.\033[0m"
+  end
+
+  def check?(player, board)
+    # Checks if player's king's current position is clear. If it is
+    # it returns false. Else it returns true.
+    king_loc = player.king_loc
+    king = board[king_loc]
+    if king.clear?(king_loc, board)
+      return false
+    end
+
+    return true
+  end
+
+  def checkmate(loser, winner)
+    # This method takes two players as arguments and check if winner(i.e., potentially the winner)
+    # has won the game. In order to do this, this method checks if #check? returns true after
+    # player's turn has ended.
+    if check?(loser, board)
+      puts "Congratulations #{winner.name} you have won the game!!!"
+      @game_end = true
+    end
   end
 end

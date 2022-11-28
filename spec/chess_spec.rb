@@ -103,9 +103,6 @@ describe Chess do
 
 
   describe "#get_player_piece" do
-    before do
-      allow(chess_game).to receive(:get_player_move)
-    end
     context "When given valid input" do
       it "breaks the loop" do
         valid_input = "1a"
@@ -122,6 +119,14 @@ describe Chess do
         allow(chess_game).to receive(:gets).and_return(invalid_input, valid_input)
         expect(chess_game).to receive(:gets).twice
         chess_game.get_player_piece(player1)
+      end
+    end
+    context "When player wants to quit the game" do
+      it "returns 'quit'" do
+        input = 'quit'
+        allow(chess_game).to receive(:gets).and_return(input)
+        result = chess_game.get_player_piece(player1)
+        expect(result).to eq(input)
       end
     end
   end
@@ -190,6 +195,13 @@ describe Chess do
         piece_to_move = '1h'
         allow(chess_game).to receive(:valid_move?).and_return(false, false, true)
         expect(chess_game).to receive(:get_input).exactly(3).times
+        chess_game.get_player_move(player1, piece_to_move)
+      end
+    end
+    context "When player want's to quit the game" do
+      it "doesn't run this function" do
+        piece_to_move = 'quit'
+        expect(chess_game).not_to receive(:get_input)
         chess_game.get_player_move(player1, piece_to_move)
       end
     end
