@@ -73,7 +73,7 @@ class Board
     end
   end
 
-  # This instance method uses combination of unicode and ASNI escape sequences to display chess board on the console.
+  # This method uses combination of unicode and ASNI escape sequences to display chess board on the console.
   def display_chess
     puts <<~CHESSBOARD
        a  b  c  d  e  f  g  h
@@ -100,18 +100,18 @@ class Board
   end
 
   def [](location)
-    row = location[0].to_i
-    col = location[1].downcase.ord - 97
-    if grid[row]
-      grid[row][col]
+    if location.is_a?(String)
+      row = location[0].to_i
+      col = location[1].downcase.ord - 97
+      grid[row][col] if grid[row]
     end
   end
 
   def []=(location, element)
-    row = location[0].to_i
-    col = location[1].downcase.ord - 97
-    if grid[row]
-      grid[row][col] = element
+    if location.is_a?(String)
+      row = location[0].to_i
+      col = location[1].downcase.ord - 97
+      grid[row][col] = element if grid[row]
     end
   end
 end

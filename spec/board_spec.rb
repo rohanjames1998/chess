@@ -242,6 +242,14 @@ describe Board do
         expect(returned_val).to eq(expected_output)
       end
     end
+    context "When given input is not a string" do
+      it "returns nil" do
+        input = []
+        expected_output = nil
+        returned_val = getter_board[input]
+        expect(returned_val).to eq(expected_output)
+      end
+    end
   end
 
   describe "#[]=" do
@@ -259,6 +267,14 @@ describe Board do
         element = dummy_piece
         board[location] = element
         expect(board[location]).to eq(element)
+      end
+    end
+    context "When given location is not a string" do
+      it "returns nil" do
+        location = 44
+        expected_output = nil
+        returned_val = board[location]
+        expect(returned_val).to eq(expected_output)
       end
     end
   end
