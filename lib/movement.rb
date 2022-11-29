@@ -57,18 +57,18 @@ module Movement
     row = initial_loc[0]
     col = initial_loc[1].ord - 97 # - 97 because 97 is ord for small 'a'
     potential_left_moves = []
+    col -= 1 # Starting from left to avoid the position piece is already at.
 
-    while col > 0
-      col -= 1
+    while col >= 0
       potential_move = row + (col + 97).chr
       case
       when board[potential_move] == "" # For empty location
         potential_left_moves << potential_move
-        next
+        col -= 1 # Moving left only if it is empty otherwise we don't need to move left.
       when board[potential_move].color != color # For enemy piece
         potential_left_moves << potential_move
         break
-      else # For ally piece and moves outside board
+      else # For ally piece
         break
       end
     end
@@ -79,14 +79,14 @@ module Movement
     row = initial_loc[0]
     col = initial_loc[1].ord - 97
     potential_right_moves = []
+    col += 1
 
-    while col < 7
-      col += 1
+    while col <= 7
       potential_move = row + (col + 97).chr
       case
       when board[potential_move] == "" # For empty location
         potential_right_moves << potential_move
-        next
+        col += 1
       when board[potential_move].color != color # For enemy piece
         potential_right_moves << potential_move
         break
@@ -102,15 +102,15 @@ module Movement
     row = initial_loc[0].to_i
     col = initial_loc[1]
     potential_top_moves = []
+    row += 1
 
-    while row < 8
-      row += 1
+    while row <= 8
       potential_move = row.to_s + col
 
       case
       when board[potential_move] == ""
         potential_top_moves << potential_move
-        next
+        row += 1
       when board[potential_move].color != color
         potential_top_moves << potential_move
         break
@@ -126,15 +126,15 @@ module Movement
     row = initial_loc[0].to_i
     col = initial_loc[1]
     potential_down_moves = []
+    row -= 1
 
-    while row > 1
-      row -= 1
+    while row >= 1
       potential_move = row.to_s + col
 
       case
       when board[potential_move] == ""
         potential_down_moves << potential_move
-        next
+        row -= 1
       when board[potential_move].color != color
         potential_down_moves << potential_move
         break
@@ -168,16 +168,18 @@ module Movement
     valid_moves = []
     row = initial_loc[0].to_i
     col = initial_loc[1].ord - 97
+    row += 1
+    col += 1
 
-    while row < 8 && col < 7
-      row += 1
-      col += 1
+    while row <= 8 && col <= 7
       # Converting col back to alphabet by adding 97.
       potential_move = row.to_s + (col + 97).chr
       piece = board[potential_move]
       case
       when piece == '' # For empty location.
         valid_moves << potential_move
+        row += 1
+        col += 1
       when piece.color != color # For enemy piece.
         valid_moves << potential_move
         break
@@ -192,20 +194,22 @@ module Movement
     valid_moves = []
     row = initial_loc[0].to_i
     col = initial_loc[1].ord - 97
+    row += 1
+    col -= 1
 
-    while row < 8 && col > 0
-      row += 1
-      col -= 1
+    while row <= 8 && col >= 0
       # Converting col back to alphabet by adding 97.
       potential_move = row.to_s + (col + 97).chr
       piece = board[potential_move]
       case
       when piece == '' # For empty location.
         valid_moves << potential_move
+        row += 1
+        col -= 1
       when piece.color != color # For enemy piece.
         valid_moves << potential_move
         break
-      else # For ally piece or board end.
+      else # For ally piece
         break
       end
     end
@@ -216,16 +220,18 @@ module Movement
     valid_moves = []
     row = initial_loc[0].to_i
     col = initial_loc[1].ord - 97
+    row -= 1
+    col += 1
 
-    while row > 1 && col < 7
-      row -= 1
-      col += 1
+    while row >= 1 && col <= 7
       # Converting col back to alphabet by adding 97.
       potential_move = row.to_s + (col + 97).chr
       piece = board[potential_move]
       case
       when piece == '' # For empty location.
         valid_moves << potential_move
+        row -= 1
+        col += 1
       when piece.color != color # For enemy piece.
         valid_moves << potential_move
         break
@@ -240,16 +246,18 @@ module Movement
     valid_moves = []
     row = initial_loc[0].to_i
     col = initial_loc[1].ord - 97
+    row -= 1
+    col -= 1
 
-    while row >= 0 && col > 0
-      row -= 1
-      col -= 1
+    while row >= 1 && col >= 0
       # Converting col back to alphabet by adding 97.
       potential_move = row.to_s + (col + 97).chr
       piece = board[potential_move]
       case
       when piece == '' # For empty location.
         valid_moves << potential_move
+        row -= 1
+        col -= 1
       when piece.color != color # For enemy piece.
         valid_moves << potential_move
         break

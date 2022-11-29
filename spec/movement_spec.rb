@@ -154,6 +154,15 @@ describe Movement do
         expect(potential_left_moves).to eq(expected_result)
       end
     end
+    context "When called on left most piece" do
+      it "doesn't return out of board moves" do
+        initial_loc = '2a'
+        color = 'white'
+        expected_result = []
+        potential_left_moves = dummy_class.generate_left_moves(initial_loc, board, color)
+        expect(potential_left_moves).to eq(expected_result)
+      end
+    end
   end
 
   describe "#generate_right_moves" do
@@ -185,6 +194,15 @@ describe Movement do
         expected_result = ['5d', '5e', '5f']
         allow(board).to receive(:[]).and_return('', '', dummy_piece)
         allow(dummy_piece).to receive(:color).and_return('black')
+        potential_right_moves = dummy_class.generate_right_moves(initial_loc, board, color)
+        expect(potential_right_moves).to eq(expected_result)
+      end
+    end
+    context "When called on right most piece" do
+      it "doesn't return out of board moves" do
+        initial_loc = '2h'
+        color = 'white'
+        expected_result = []
         potential_right_moves = dummy_class.generate_right_moves(initial_loc, board, color)
         expect(potential_right_moves).to eq(expected_result)
       end
@@ -224,8 +242,18 @@ describe Movement do
         expect(potential_top_moves).to eq(expected_result)
       end
     end
+    context "When called on piece that is on top" do
+      it "doesn't return out of board moves" do
+        initial_loc = '8g'
+        color = 'white'
+        expected_result = []
+        potential_top_moves = dummy_class.generate_up_moves(initial_loc, board, color)
+        expect(potential_top_moves).to eq(expected_result)
+      end
+    end
+  end
 
-    describe "#generate_up_moves" do
+    describe "#generate_down_moves" do
       context "When there are no piece at bot" do
         it "returns all empty bot locations upto board end" do
           initial_loc = '6a'
@@ -258,8 +286,16 @@ describe Movement do
           expect(potential_bot_moves).to eq(expected_result)
         end
       end
+      context "When called on piece that is on the bottom" do
+        it "doesn't return out of board moves" do
+          initial_loc = '1g'
+          color = 'white'
+          expected_result = []
+          potential_bot_moves = dummy_class.generate_down_moves(initial_loc, board , color)
+          expect(potential_bot_moves).to eq(expected_result)
+        end
+      end
     end
-  end
 
   describe "#generate_knight_moves" do
     context "When called" do
@@ -352,6 +388,15 @@ describe Movement do
         expect(potential_moves).to eq(expected_result)
       end
     end
+    context "When called on piece that is on the top right" do
+      it "doesn't return out of board moves" do
+        initial_loc = '8h'
+        color = 'white'
+        expected_result = []
+        potential_moves = dummy_class.generate_top_right_moves(initial_loc, board, color)
+        expect(potential_moves).to eq(expected_result)
+      end
+    end
   end
 
   describe '#generate_top_left_moves' do
@@ -383,6 +428,15 @@ describe Movement do
         expected_result = ['2e', '3d', '4c']
         allow(board).to receive(:[]).and_return('', '', dummy_piece)
         allow(dummy_piece).to receive(:color).and_return('black')
+        potential_moves = dummy_class.generate_top_left_moves(initial_loc, board, color)
+        expect(potential_moves).to eq(expected_result)
+      end
+    end
+    context "When on piece that on the top left" do
+      it "doesn't return out of board moves" do
+        initial_loc = '8a'
+        color = 'white'
+        expected_result = []
         potential_moves = dummy_class.generate_top_left_moves(initial_loc, board, color)
         expect(potential_moves).to eq(expected_result)
       end
@@ -422,6 +476,15 @@ describe Movement do
         expect(potential_moves).to eq(expected_result)
       end
     end
+    context "When called on piece that is on down right corner" do
+      it "doesn't return out of board moves" do
+        initial_loc = '1h'
+        color = 'white'
+        expected_result = []
+        potential_moves = dummy_class.generate_down_right_moves(initial_loc, board, color)
+        expect(potential_moves).to eq(expected_result)
+      end
+    end
   end
 
   describe '#generate_down_left_moves' do
@@ -453,6 +516,15 @@ describe Movement do
         color = 'white'
         allow(board).to receive(:[]).and_return('', '', dummy_piece)
         allow(dummy_piece).to receive(:color).and_return('black')
+        potential_moves = dummy_class.generate_down_left_moves(initial_loc, board, color)
+        expect(potential_moves).to eq(expected_result)
+      end
+    end
+    context "When called on piece that is on the down left corner" do
+      it "doesn't return out of board moves" do
+        initial_loc = '1a'
+        color = 'white'
+        expected_result = []
         potential_moves = dummy_class.generate_down_left_moves(initial_loc, board, color)
         expect(potential_moves).to eq(expected_result)
       end
