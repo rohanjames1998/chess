@@ -568,4 +568,15 @@ describe Movement do
       end
     end
   end
+
+  describe "#remove_out_of_board_moves" do
+    context "When called with some moves that are out of board" do
+      it "removes out of board moves and leaves valid moves" do
+        all_moves = ['1e', '0c', '-1d', '3k']
+        expected_result = ['1e']
+        result = dummy_class.remove_out_of_board_moves(all_moves)
+        expect(result).to eq(expected_result)
+      end
+    end
+  end
 end

@@ -282,4 +282,16 @@ module Movement
     potential_moves << (row - 1).to_s + (col + 1).chr #down-right
     potential_moves
   end
+
+  def remove_out_of_board_moves(moves)
+    inboard_moves = []
+    moves.each do |move|
+      row = move[0].to_i
+      col = move[1].ord - 97
+      if row.between?(1, 8) && col.between?(0, 7)
+        inboard_moves << move
+      end
+    end
+    inboard_moves
+  end
 end
