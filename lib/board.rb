@@ -92,8 +92,12 @@ class Board
   def chess_piece_at(grid_location)
     # If given location is empty it returns empty space else it returns the unicode
     # of the piece at the location.
-    if grid_location == ""
+    potential_moves_indicator = "\u2718"
+    case
+    when grid_location == ""
       return " "
+    when grid_location == potential_moves_indicator
+      return potential_moves_indicator
     else
       return grid_location.unicode
     end

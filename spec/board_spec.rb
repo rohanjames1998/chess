@@ -204,13 +204,21 @@ describe Board do
         expect(result).to eq(black_rook)
       end
     end
-
     context "When there is NO chess piece on given location" do
       it "returns empty space" do
       empty_location = displaying_board.grid[4][0]
       empty_space_string = " "
       result = displaying_board.chess_piece_at(empty_location)
       expect(result).to eq(empty_space_string)
+      end
+    end
+    context "When there is a potential move indicator on given location" do
+      it "returns the indicator" do
+        loc_with_indicator = displaying_board.grid[3][0]
+        indicator = "\u2718"
+        allow(displaying_board).to receive(:grid).and_return(indicator)
+        result = displaying_board.chess_piece_at(loc_with_indicator)
+        expect(result).to eq(indicator)
       end
     end
   end
