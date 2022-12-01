@@ -31,8 +31,6 @@ include Movement
     all_moves.each do |move|
       piece = board[move]
       case
-      when piece == nil # For moves outside the board
-        next
       when piece == "" # For empty places
         valid_moves << move
         next
@@ -40,7 +38,7 @@ include Movement
         valid_moves << move
         next
       else # For ally pieces
-        break
+        next
       end
     end
     valid_moves
