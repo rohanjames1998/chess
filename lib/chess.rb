@@ -78,10 +78,10 @@ class Chess
       case
       when input == 'quit'
         return 'quit'
-      when valid_input?(input, player) && board[input] == " "
-        print "The location you entered has no chess piece."
+      when valid_format?(input) && board[input] == ""
+        print "The location you entered has no chess piece.\n"
         next
-      when valid_input?(input, player) && board[input] != " "
+      when valid_input?(input, player) && board[input] != ""
         return input
         break
       else
@@ -96,7 +96,7 @@ class Chess
 
   def get_player_move(player, piece)
     # If player wants to quit the game while choosing their piece
-    # this function wont run
+    # this method wont run
     return if piece == 'quit'
     potential_moves = board[piece].generate_potential_moves(piece, board)
     display_potential_moves(potential_moves)
@@ -108,9 +108,9 @@ class Chess
         round(player)
         remove_potential_moves(potential_moves)
         break
-      when valid_move?(move)
+      when valid_move?(move, piece, potential_moves)
         move_piece(piece, move, player)
-        remove_potential_moves(potential_moves)
+        remove_potential_moves_indicator(potential_moves)
         break
       else
         puts "\n\033[31;1Invalid move\033[0m"
@@ -124,27 +124,30 @@ class Chess
     potential_moves.each do |move|
       board[move] = indicator
     end
+    board.display_chess
   end
 
-  def valid_move?(move, piece)
-    potential_moves = board[piece].generate_potential_moves(piece, board)
+  def valid_move?(move, piece, potential_moves)
+    # This method checks if move given by player has valid format and
+    # is included in potential moves of the piece selected.
     if valid_format?(move) && potential_moves.include?(move)
       return true
     end
     return false
   end
 
-  def move_piece(move, piece, player)
+  def move_piece(piece, move, player)
     # This method moves the piece to given location and removes it from the previous location
     # Also if player chooses to move their king it changes player.king_loc to new location
     # so we can track where the king's location for #check? and #checkmate?
     if board[piece].is_a?(King)
       board[move] = board[piece]
       player.king_loc = move
-      board[piece] = ' '
+      board[piece] = ""
     else
+      puts board[piece]
       board[move] = board[piece]
-      board[piece] = ' '
+      board[piece] = ""
     end
   end
 
@@ -152,7 +155,7 @@ class Chess
     indicator = "\u2718"
     potential_moves.each do |move|
       if board[move] == indicator
-        board[move] = ' '
+        board[move] = ""
       end
     end
   end
