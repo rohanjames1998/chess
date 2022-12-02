@@ -21,7 +21,7 @@ class King
 
   def generate_potential_moves(initial_loc, board)
     all_moves = generate_king_moves(initial_loc)
-    valid_moves = validate_moves(move, board, color)
+    valid_moves = validate_moves(all_moves, board, color)
     potential_moves = check_safe_moves(valid_moves, board)
     potential_moves
   end
@@ -54,7 +54,7 @@ class King
   end
 
   def clear?(move, board)
-    # This method checks if the location is threatened by an enemy piece
+    # This method checks if a location is threatened by an enemy piece
     # Returns true if there is no threat; returns false if there is a threat.
     case
     when diagonal_threat?(move, board)
@@ -67,7 +67,7 @@ class King
       return false
     when king_threat?(move, board, color)
       return false
-    when pawn_threat?(move, board)
+    when pawn_threat?(move, board, color)
       return false
     else
       return true
@@ -145,11 +145,11 @@ class King
     return false
   end
 
-  def king_threat?(move, board)
+  def king_threat?(move, board, color)
     potential_enemy_locations = generate_king_moves(move)
     potential_enemy_locations.each do |loc|
       piece = board[loc]
-      if piece.is_a?(King)
+      if piece.is_a?(King) && piece.color != color
         return true
       end
     end
