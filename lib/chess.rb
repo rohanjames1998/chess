@@ -10,7 +10,7 @@ class Chess
     @board = Board.new
     @game_end = false
     @turn = p1
-    @potential_winner = p2
+    @potential_winner = p2 #This variable track who might win the game when we run #checkmate(see below)
   end
 
   def start_game
@@ -19,13 +19,23 @@ class Chess
     board.add_new_pieces_to_board
   end
 
-  def play_game(player1 = p1)
+  def play_game
     loop do
       break if game_end == true
       board.display_chess
       round(@turn)
       checkmate(turn, potential_winner)
       change_turns
+    end
+  end
+
+  def change_turns
+    if turn == p1
+      @turn = p2
+      @potential_winner = p1
+    else
+      @turn = p1
+      @potential_winner = p2
     end
   end
 
