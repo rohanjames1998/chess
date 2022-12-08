@@ -2,13 +2,15 @@ require_relative 'player'
 require_relative 'board'
 
 class Chess
-  attr_reader :board, :game_end, :p1, :p2
+  attr_reader :board, :game_end, :p1, :p2, :turn, :potential_winner
 
   def initialize
     @p1 = Player.new
     @p2 = Player.new
     @board = Board.new
     @game_end = false
+    @turn = p1
+    @potential_winner = p2
   end
 
   def start_game
@@ -17,16 +19,13 @@ class Chess
     board.add_new_pieces_to_board
   end
 
-  def play_game(player1 = p1, player2 = p2)
+  def play_game(player1 = p1)
     loop do
       break if game_end == true
       board.display_chess
-      round(player1)
-      checkmate(player1, player2)
-      break if game_end == true
-      board.display_chess
-      round(player2)
-      checkmate(player2, player1)
+      round(@turn)
+      checkmate(turn, potential_winner)
+      change_turns
     end
   end
 
@@ -49,10 +48,12 @@ class Chess
   end
 
   def valid_format?(loc)
-    row = loc[0]
-    col = loc[1].downcase
-    if /[1-8]$/.match(row) && /[a-h]$/.match(col)
-      return true
+    if loc.length >= 2
+      row = loc[0]
+      col = loc[1].downcase
+      if /[1-8]$/.match(row) && /[a-h]$/.match(col)
+        return true
+      end
     end
 
     return false
@@ -105,15 +106,16 @@ class Chess
       move = get_input
       case
       when move == 'x'
+        remove_potential_moves_indicator(potential_moves)
+        board.display_chess
         round(player)
-        remove_potential_moves(potential_moves)
         break
       when valid_move?(move, piece, potential_moves)
         move_piece(piece, move, player)
         remove_potential_moves_indicator(potential_moves)
         break
       else
-        puts "\n\033[31;1Invalid move\033[0m"
+        puts "\n\033[31;1;1mInvalid move\033[0m"
         next
       end
     end
@@ -122,7 +124,9 @@ class Chess
   def display_potential_moves(potential_moves)
     indicator = "\u2718"
     potential_moves.each do |move|
-      board[move] = indicator
+      if board[move] == ''
+        board[move] = indicator
+      end
     end
     board.display_chess
   end
@@ -145,7 +149,6 @@ class Chess
       player.king_loc = move
       board[piece] = ""
     else
-      puts board[piece]
       board[move] = board[piece]
       board[piece] = ""
     end
@@ -166,6 +169,7 @@ class Chess
          "1a",
          "Where '1' is the row and 'a' is the column of the board.",
          "\033[31mRemember your row cannot be greater than 8 and your column cannot be any alphabet higher than 'h'.\033[0m"
+    board.display_chess
   end
 
   def check?(player, board)
@@ -183,7 +187,7 @@ class Chess
   def checkmate(loser, winner)
     # This method takes two players as arguments and check if winner(i.e., potentially the winner)
     # has won the game. In order to do this, this method checks if #check? returns true after
-    # player's turn has ended.
+    # loser's turn has ended.
     if check?(loser, board)
       puts "Congratulations #{winner.name} you have won the game!!!"
       @game_end = true
