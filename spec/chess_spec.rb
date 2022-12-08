@@ -186,6 +186,7 @@ describe Chess do
         allow(chess_game).to receive(:get_input).and_return(player_choice)
         allow(chess_game.board).to receive(:[]).and_return(dummy_piece)
         allow(dummy_piece).to receive(:generate_potential_moves)
+        allow(chess_game).to receive(:remove_potential_moves_indicator)
         expect(chess_game).to receive(:round).once
         chess_game.get_player_move(player1, piece_to_move)
       end
@@ -198,7 +199,7 @@ describe Chess do
         chess_game.get_player_move(player1, piece_to_move)
       end
     end
-    context "When player want's to quit the game" do
+    context "When player wants to quit the game" do
       it "doesn't run this function" do
         piece_to_move = 'quit'
         expect(chess_game).not_to receive(:get_input)
@@ -228,30 +229,28 @@ describe Chess do
     context "When given move has invalid format" do
       it "returns false" do
         piece = '2a'
+        potential_moves = ['3a', '4a']
         invalid_move = '9i'
         allow(chess_game).to receive(:valid_format?).and_return(false)
-        allow(dummy_piece).to receive(:generate_potential_moves)
-        returned_val = chess_game.valid_move?(invalid_move, piece)
+        returned_val = chess_game.valid_move?(invalid_move, piece, potential_moves)
         expect(returned_val).to eq(false)
       end
     end
-    context "When given move is not included in possible moves" do
+    context "When given move is not included in potential moves" do
       it "returns false" do
       piece = '2a'
       move = '5a'
-      possible_moves = ['3a', '4a']
-      allow(dummy_piece).to receive(:generate_potential_moves).and_return(possible_moves)
-      returned_val = chess_game.valid_move?(move, piece)
+      potential_moves = ['3a', '4a']
+      returned_val = chess_game.valid_move?(move, piece, potential_moves)
       expect(returned_val).to eq(false)
       end
     end
-    context "When given input is valid and included in possible moves" do
+    context "When given input is valid and included in potential moves" do
       it "returns true" do
         piece = '7a'
         valid_move = '6a'
-        possible_moves = ['6a', '5a']
-        allow(dummy_piece).to receive(:generate_potential_moves).and_return(possible_moves)
-        returned_val = chess_game.valid_move?(valid_move, piece)
+        potential_moves = ['6a', '5a']
+        returned_val = chess_game.valid_move?(valid_move, piece, potential_moves)
         expect(returned_val).to eq(true)
       end
     end
@@ -268,13 +267,13 @@ describe Chess do
         piece = "2a"
         move = "3a"
         chess_game.board[piece] = dummy_piece
-        chess_game.move_piece(move, piece, player1)
+        chess_game.move_piece(piece, move, player1)
         expect(chess_game.board['3a']).to eq(dummy_piece)
       end
       it "removes piece from its previous location" do
         piece = "6c"
         move = "5c"
-        chess_game.move_piece(move, piece, player1)
+        chess_game.move_piece(piece, move, player1)
         expect(chess_game.board[move]).to eq('')
       end
     end
@@ -284,7 +283,7 @@ describe Chess do
         move = '2e'
         allow(chess_game.board).to receive(:is_a?).and_return(true)
         expect(player1).to receive(:king_loc=).with(move).once
-        chess_game.move_piece(move, piece, player1)
+        chess_game.move_piece(piece, move, player1)
       end
     end
   end
@@ -299,13 +298,13 @@ describe Chess do
         board['5a'] = indicator
         board['6a'] = indicator
         chess_game.remove_potential_moves_indicator(potential_moves)
-        result = potential_moves.all? { |move| board[move] == ' ' }
+        result = potential_moves.all? { |move| board[move] == '' }
         expect(result).to eq(true)
       end
       it "only removes indicators from the board and nothing else" do
         potential_moves = ['3a', '3b', '3c']
         board = chess_game.board
-        expected_result = [' ', dummy_piece, ' ']
+        expected_result = ['', dummy_piece, '']
         result = []
         indicator ="\u2718"
         board['3a'] = indicator
@@ -327,7 +326,7 @@ describe Chess do
         allow(chess_game).to receive(:get_player_piece)
         allow(chess_game).to receive(:game_end).and_return(false, false, true)
         expect(chess_game).to receive(:round).twice
-        chess_game.play_game(player1, player2)
+        chess_game.play_game
       end
     end
   end
@@ -373,6 +372,25 @@ describe Chess do
         allow(chess_game).to receive(:check?).and_return(false)
         expect(chess_game).not_to receive(:game_end=)
         chess_game.checkmate(loser, winner)
+      end
+    end
+  end
+
+  describe "#change_turns" do
+    context "When called with first player's turn" do
+      it "changes turn to second player" do
+        # When we initialize chess @turn is set to p1
+        p2 = chess_game.p2
+        chess_game.change_turns
+        expect(chess_game.turn).to eq(p2)
+      end
+    end
+    context "When potential winner is the second player" do
+      it "changes potential winner to first player" do
+        # When we initialize chess @potential_winner is set to p2.
+        p1 = chess_game.p1
+        chess_game.change_turns
+        expect(chess_game.potential_winner).to eq(p1)
       end
     end
   end
