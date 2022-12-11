@@ -1,5 +1,7 @@
 require_relative 'player'
 require_relative 'board'
+require 'json'
+require 'fileutils'
 
 class Chess
   attr_reader :board, :game_end, :p1, :p2, :turn, :potential_winner
@@ -202,5 +204,88 @@ class Chess
       puts "Congratulations #{winner.name} you have won the game!!!"
       @game_end = true
     end
+  end
+  def save_game
+    loop do
+      print "\nEnter the name of your save file:"
+      file_name = get_input
+      file_name += '.json'
+      path = './saved_games'
+      FileUtils.mkdir_p(path) unless File.exist?(path)
+      complete_file_name = File.join(path, file_name)
+      if File.exist?(complete_file_name)
+        puts 'A save file with that name already exists.'
+        next
+      else
+        File.open(complete_file_name, 'w') do |file|
+          file.write(convert_to_json(p1, p2, board, turn, potential_winner))
+        end
+        puts "\nYour game has been successfully saved."
+        break
+      end
+    end
+  end
+
+  def convert_to_json(p1, p2, board, turn, potential_winner)
+    hash = {
+      'p1_name' => p1.name,
+      'p1_color' => p1.color,
+      'p1_king_loc' => p1.king_loc,
+      'p2_name' => p2.name,
+      'p2_color' => p2.color,
+      'p2_king_loc' => p2.king_loc,
+      'board' => board.grid,
+      'turn' => turn,
+      'potential_winner' => potential_winner
+    }.to_json
+  end
+
+  def load_game
+    saved_data = get_saved_file
+    p1.name = saved_data['p1_name']
+    p1.color = saved_data['p1_color']
+    p1.king_loc = saved_data['p1_king_loc']
+    p2.name = saved_data['p2_name']
+    p2.color = saved_data['p2_color']
+    p2.king_loc = saved_data['p2_king_loc']
+    board.grid = convert_json_hash(saved_data['board'])
+    @turn = saved_data['turn']
+    @potential_winner = saved_data['potential_winner']
+  end
+
+  def get_saved_file
+    path = './saved_games'
+    puts "\nPlease choose a save file:"
+    Dir.each_child(path) do |file|
+      saved_file_name = file.split('.')[0]
+      puts saved_file_name # Showing file names for user to choose from.
+    end
+    user_input = get_file_name
+    selected_file = File.read(user_input)
+    saved_data = JSON.parse(selected_file)
+    saved_data
+  end
+
+  def get_file_name
+    loop do
+      name = get_input
+      file_name_with_path = File.join('./saved_games', name)
+      if File.exist?("#{file_name_with_path}.json")
+        return "#{file_name_with_path}.json"
+      else
+        print "Please enter a valid file name:"
+        next
+      end
+    end
+  end
+
+  def convert_json_hash(hash)
+    converted_hash = Hash.new
+    row = 8
+    while row > 0
+      converted_hash[row] = hash[row.to_s]
+      row -= 1
+    end
+    converted_hash
   end
 end
