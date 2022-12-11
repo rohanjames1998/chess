@@ -7,14 +7,20 @@ describe Chess do
   let(:player2) { instance_double(Player) }
   let(:dummy_piece) { instance_double(Pawn) }
   let(:king) { instance_double(King) }
+  let(:board) { instance_double(Board) }
 
   before do
     # Removing all output statements from console.
     allow(STDOUT).to receive(:puts)
     chess_game.board.add_new_pieces_to_board
+    allow(player1).to receive(:name).and_return('podrick')
     allow(player1).to receive(:color).and_return('white')
+    allow(player1).to receive(:king_loc).and_return('1c')
+    allow(player2).to receive(:name).and_return('brienne')
     allow(player2).to receive(:color).and_return('black')
+    allow(player2).to receive(:king_loc).and_return('8c')
     allow(dummy_piece).to receive(:color).and_return('white')
+    allow(board).to receive(:grid).and_return(Hash.new)
   end
 
   describe "#valid_input?" do
@@ -391,6 +397,193 @@ describe Chess do
         p1 = chess_game.p1
         chess_game.change_turns
         expect(chess_game.potential_winner).to eq(p1)
+      end
+    end
+  end
+
+  describe "#save_game" do
+    context "When saved_games directory doesn't exist" do
+      it "creates saved_games directory" do
+        file_name = 'my_game'
+        path = './saved_games'
+        allow(File).to receive(:open)
+        chess_game.save_game
+        file_exist = File.exist?(path)
+        expect(file_exist).to eq(true)
+      end
+    end
+    context "When file with the same name exists" do
+      it "asks for another file name" do
+        dup_name = 'my_game'
+        alt_name = 'our_game'
+        allow(chess_game).to receive(:get_input).and_return(dup_name, alt_name)
+        allow(File).to receive(:exist?).and_return(true, true, false) #First true is for directory.
+        expect(chess_game).to receive(:get_input).twice
+        chess_game.save_game
+      end
+    end
+    context "When given unique file name" do
+      it "saves the game" do
+        file_name = 'game1'
+        complete_file_name = './saved_games/game1.json'
+        allow(File).to receive(:exists?).and_return(true, false)
+        allow(chess_game).to receive(:get_input).and_return(file_name)
+        expect(File).to receive(:open).with(complete_file_name, 'w')
+        chess_game.save_game
+      end
+    end
+  end
+
+  describe "#convert_to_json" do
+    context "When called" do
+      it "converts given data to a JSON hash" do
+        turn = player1
+        potential_winner = player2
+        returned_val = chess_game.convert_to_json(player1, player2, board, turn, potential_winner)
+        result = returned_val.is_a?(String)
+        expect(result).to eq(true)
+      end
+    end
+  end
+
+  describe "#load_game" do
+
+    let(:dummy_board) { {1 => ['', '', '', '', '', 'k']} }
+    let(:saved_data) { {'p1_name' => 'jon',
+      'p1_color' => 'white',
+      'p1_king_loc' => '1e',
+      'p2_name' => 'snow',
+      'p2_color' => 'black',
+      'p2_king_loc' => '8e',
+      'board' => dummy_board,
+      'turn' => 'p2',
+      'potential_winner' => 'p1'} }
+    before do
+      # Passing a dummy hash so we can check it loads ok in the game.
+      allow(chess_game).to receive(:convert_json_hash).and_return(dummy_board)
+      allow(chess_game).to receive(:get_saved_file).and_return(saved_data)
+    end
+
+    context "When called" do
+      it "sets p1's name to saved name" do
+        expect(chess_game.p1).to receive(:name=).with('jon')
+        chess_game.load_game
+      end
+      it "sets p1's color to saved color" do
+        expect(chess_game.p1).to receive(:color=).with('white')
+        chess_game.load_game
+      end
+      it "sets p1's king_loc to saved location" do
+        expect(chess_game.p1).to receive(:king_loc=).with('1e')
+        chess_game.load_game
+      end
+      it "sets p2's name to saved name" do
+        expect(chess_game.p2).to receive(:name=).with('snow')
+        chess_game.load_game
+      end
+      it "sets p2's color to saved color" do
+        expect(chess_game.p2).to receive(:color=).with('black')
+        chess_game.load_game
+      end
+      it "sets p2's king_loc to saved location" do
+        expect(chess_game.p2).to receive(:king_loc=).with('8e')
+        chess_game.load_game
+      end
+      it "sets board's grid to saved grid" do
+        expect(chess_game.board).to receive(:grid=).with(dummy_board)
+        chess_game.load_game
+      end
+      it "sets turn to saved turn" do
+        chess_game.load_game
+        expect(chess_game.turn).to eq('p2')
+      end
+      it "sets potential_winner to saved potential_winner" do
+        chess_game.load_game
+        expect(chess_game.potential_winner).to eq('p1')
+      end
+    end
+  end
+
+  describe "#get_saved_file" do
+
+    before do
+      allow(File).to receive(:read)
+      allow(JSON).to receive(:parse)
+      allow(chess_game).to receive(:get_file_name).and_return('./saved_games/my_game.json')
+      allow(Dir).to receive(:each_child)
+    end
+
+    context "When called" do
+      it "shows all the files in the saved_games directory" do
+        path = './saved_games'
+        expect(Dir).to receive(:each_child).with(path)
+        chess_game.get_saved_file
+      end
+      it "reads the saved file" do
+        saved_file = './saved_games/my_game.json'
+        expect(File).to receive(:read).with(saved_file)
+        chess_game.get_saved_file
+      end
+      it "parses the saved file" do
+        # For the sake of test we are gonna pass a string rather than a json file as we only want to
+        # test whether or not it is passed to JSON's #parse method.
+        # We will not be testing #parse's functionality.
+        test_data = 'my_saved_data_file'
+        allow(File).to receive(:read).and_return(test_data)
+        expect(JSON).to receive(:parse).with(test_data)
+        chess_game.get_saved_file
+      end
+      it "returns the saved data" do
+        test_data = 'my_saved_data_file'
+        allow(JSON).to receive(:parse).and_return(test_data)
+        result = chess_game.get_saved_file
+        expect(result).to eq(test_data)
+      end
+    end
+  end
+
+  describe "#convert_json_hash" do
+    context "When called" do
+      it "returns a new hash with saved data that we can use as our board" do
+        # What we need is a hash whose rows are int rather than string that we get when we parse a JSON hash.
+        saved_hash = { '1' => [''],
+                       '2' => [''],
+                       '3' => [''],
+                       '4' => [''],
+                       '5' => [''],
+                       '6' => [''],
+                       '7' => [''],
+                       '8' => [''] }
+        expected_result = { 1 => [''],
+                            2 => [''],
+                            3 => [''],
+                            4 => [''],
+                            5 => [''],
+                            6 => [''],
+                            7 => [''],
+                            8 => [''] }
+        result = chess_game.convert_json_hash(saved_hash)
+        expect(result).to eq(expected_result)
+      end
+    end
+  end
+
+  describe "#get_file_name" do
+    context "When file exists" do
+      it "returns file name with full path" do
+        file_name = 'my_game'
+        full_path = './saved_games/my_game.json'
+        allow(chess_game).to receive(:get_input).and_return(file)
+        allow(File).to receive(:exists?).and_return(true)
+        result = chess_game.get_file_name
+        expect(result).to eq(full_path)
+      end
+    end
+    context "When file chosen by user doesn't exist" do
+      it "asks user to enter valid file name until given" do
+        allow(File).to receive(:exists?).and_return(false, true)
+        expect(chess_game).to receive(:get_input).twice
+        chess_game.get_file_name
       end
     end
   end
