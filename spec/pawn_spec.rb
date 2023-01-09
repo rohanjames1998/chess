@@ -7,11 +7,30 @@ describe Pawn do
   let(:board) { instance_double(Board)}
   let(:dummy_piece) { instance_double(Knight) }
 
-  before do
-    allow(pawn).to receive(:color).and_return("white")
+  describe '#white' do
+    context 'When called' do
+      it 'makes pawn white' do
+        pawn.white
+        expect(pawn.color).to eq('white')
+        expect(pawn.unicode).to eq("\u2659")
+      end
+    end
+  end
+
+  describe '#black' do
+    context 'When called' do
+      it 'makes pawn black' do
+        pawn.black
+        expect(pawn.color).to eq('black')
+        expect(pawn.unicode).to eq("\u265f")
+      end
+    end
   end
 
   describe "#check_valid_moves" do
+    before do
+      allow(pawn).to receive(:color).and_return("white")
+    end
     context "When its the first move and both forward locations are empty" do
       it "returns both locations" do
         normal_moves = ["3a", "4a"]
