@@ -214,9 +214,9 @@ describe Board do
     end
     context "When there is a potential move indicator on given location" do
       it "returns the indicator" do
-        loc_with_indicator = displaying_board.grid[3][0]
         indicator = "\u2718"
-        allow(displaying_board).to receive(:grid).and_return(indicator)
+        displaying_board.grid[3][0] = indicator
+        loc_with_indicator = displaying_board.grid[3][0]
         result = displaying_board.chess_piece_at(loc_with_indicator)
         expect(result).to eq(indicator)
       end
