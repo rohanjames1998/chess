@@ -16,6 +16,26 @@ describe King do
   let(:dummy_piece) { instance_double(Knight) }
   let(:board) { instance_double(Board) }
 
+  describe '#white' do
+    context 'When called' do
+      it 'makes king white' do
+        king.white
+        expect(king.color).to eq('white')
+        expect(king.unicode).to eq("\u2654")
+      end
+    end
+  end
+
+  describe '#black' do
+    context 'When called' do
+      it 'makes king black' do
+        king.black
+        expect(king.color).to eq('black')
+        expect(king.unicode).to eq("\u265a")
+      end
+    end
+  end
+
   describe "#validate_moves" do
     context "When all moves are empty" do
       it "returns all moves" do
@@ -308,28 +328,32 @@ describe King do
   describe "#king_threat?" do
     before do
       allow(king).to receive(:generate_king_moves).and_return(['3f', '3e', '3g', '4e', '4g', '5f', '5e', '5g'])
+      allow(enemy_king).to receive(:color).and_return('black')
     end
     context "When there is a king threatening the move" do
       it "returns true" do
         move = "4f"
+        color = 'white'
         allow(board).to receive(:[]).and_return('', enemy_king)
-        result = king.king_threat?(move, board)
+        result = king.king_threat?(move, board, color)
         expect(result).to eq(true)
       end
     end
     context "When there is an enemy piece other than enemy king near the move" do
       it "returns false" do
         move = "4f"
+        color = 'white'
         allow(board).to receive(:[]).and_return('', enemy_knight)
-        result = king.king_threat?(move, board)
+        result = king.king_threat?(move, board, color)
         expect(result).to eq(false)
       end
     end
     context "When there is no king threat" do
       it "returns false" do
         move = "4f"
+        color = 'white'
         allow(board).to receive(:[]).and_return('')
-        result = king.king_threat?(move, board)
+        result = king.king_threat?(move, board, color)
         expect(result).to eq(false)
       end
     end
