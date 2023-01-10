@@ -23,6 +23,36 @@ describe Chess do
     allow(board).to receive(:grid).and_return(Hash.new)
   end
 
+  describe '#start_game' do
+    before do
+      allow(chess_game).to receive(:load_game)
+      allow(chess_game).to receive(:play_game)
+    end
+    context 'When player wants to load a saved game' do
+      it 'calls load_game method' do
+        allow(chess_game).to receive(:gets).and_return('y')
+        expect(chess_game).to receive(:load_game).once
+        chess_game.start_game
+      end
+    end
+    context 'When player wants to play an new game' do
+      it 'Makes a new game' do
+        allow(chess_game).to receive(:gets).and_return('n')
+        expect(chess_game.p1).to receive(:white)
+        expect(chess_game.p2).to receive(:black)
+        expect(chess_game.board).to receive(:add_new_pieces_to_board)
+        chess_game.start_game
+      end
+    end
+    context 'When given invalid input' do
+      it 'loops until valid input is given' do
+        allow(chess_game).to receive(:gets).and_return('x', 'n')
+        expect(chess_game).to receive(:gets).twice
+        chess_game.start_game
+      end
+    end
+  end
+
   describe "#valid_input?" do
     context "When given valid input" do
       it "returns true" do
