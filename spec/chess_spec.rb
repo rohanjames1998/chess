@@ -573,15 +573,16 @@ describe Chess do
       it "returns file name with full path" do
         file_name = 'my_game'
         full_path = './saved_games/my_game.json'
-        allow(chess_game).to receive(:get_input).and_return(file)
-        allow(File).to receive(:exists?).and_return(true)
+        allow(chess_game).to receive(:get_input).and_return(file_name)
+        allow(File).to receive(:exist?).and_return(true)
         result = chess_game.get_file_name
         expect(result).to eq(full_path)
       end
     end
     context "When file chosen by user doesn't exist" do
       it "asks user to enter valid file name until given" do
-        allow(File).to receive(:exists?).and_return(false, true)
+        allow(chess_game).to receive(:get_input).and_return('my_saved_file', 'my_game')
+        allow(File).to receive(:exist?).and_return(false, true)
         expect(chess_game).to receive(:get_input).twice
         chess_game.get_file_name
       end
