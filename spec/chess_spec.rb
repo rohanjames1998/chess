@@ -51,6 +51,14 @@ describe Chess do
         chess_game.start_game
       end
     end
+    context "When there is an error loading the saved file" do
+      it "rescue's the error" do
+        allow(chess_game).to receive(:gets).and_return('y', 'n')
+        allow(chess_game).to receive(:load_game).and_raise(StandardError)
+        expect(chess_game).to receive(:gets).twice
+        chess_game.start_game
+      end
+    end
   end
 
   describe "#valid_input?" do
