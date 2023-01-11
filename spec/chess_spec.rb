@@ -165,7 +165,17 @@ describe Chess do
         expect(result).to eq(input)
       end
     end
-  end
+    context "When plater wants to save the game" do
+      it "saves the game" do
+        input = 'save'
+        allow(chess_game).to receive(:save_game)
+        allow(chess_game).to receive(:gets).and_return(input, 'quit')
+        # Passing quit to break the loop. Because after saving the loop restarts.
+        expect(chess_game).to receive(:save_game)
+        chess_game.get_player_piece(player1)
+        end
+      end
+    end
 
   describe "#get_input" do
 
@@ -572,31 +582,69 @@ describe Chess do
     end
   end
 
-  describe "#convert_json_hash" do
-    context "When called" do
-      it "returns a new hash with saved data that we can use as our board" do
-        # What we need is a hash whose rows are int rather than string that we get when we parse a JSON hash.
-        saved_hash = { '1' => [''],
-                       '2' => [''],
-                       '3' => [''],
-                       '4' => [''],
-                       '5' => [''],
-                       '6' => [''],
-                       '7' => [''],
-                       '8' => [''] }
-        expected_result = { 1 => [''],
-                            2 => [''],
-                            3 => [''],
-                            4 => [''],
-                            5 => [''],
-                            6 => [''],
-                            7 => [''],
-                            8 => [''] }
-        result = chess_game.convert_json_hash(saved_hash)
+  describe "#load_game_board" do
+    # Box here refers to item of array (i.e., element of the array)
+    context "When box is empty" do
+      it "pushes empty box on the row of hash" do
+        saved_hash = { '8' => [''], '7' => ['']}
+        expected_result = { 8 => [''], 7 => ['']}
+        result = chess_game.load_game_board(saved_hash)
+        expect(result).to eq(expected_result)
+      end
+    end
+    context "When box has a piece in it" do
+      it "pushes box with the piece" do
+        saved_hash = {'8' => [['Pawn', 'white']]}
+        expected_result = {8 => [dummy_piece]}
+        allow(chess_game).to receive(:load_piece_from_json).and_return(dummy_piece)
+        result = chess_game.load_game_board(saved_hash)
         expect(result).to eq(expected_result)
       end
     end
   end
+
+  describe "#save_game_board" do
+    context "When called" do
+      it "converts piece's information to an array" do
+      #This array will be used to recreate board when
+      #we load the game afterwards.
+      hash_to_save = { 8 => [dummy_piece] }
+      expected_result = { 8 => [[Pawn, 'white']] }
+      allow(chess_game).to receive(:save_piece_info).and_return([Pawn, 'white'])
+      result = chess_game.save_game_board(hash_to_save)
+      expect(result).to eq(expected_result)
+      end
+      it "pushes empty box as it is" do
+        hash_to_save = { 8=> [''] }
+        expected_result = { 8=> [''] }
+        result = chess_game.save_game_board(hash_to_save)
+        expect(result).to eq(expected_result)
+      end
+    end
+  end
+
+  describe "#save_piece_info" do
+    context "When given a piece" do
+      it "returns an array with piece's class and color" do
+        expected_result = [Pawn, 'white']
+        allow(dummy_piece).to receive(:class).and_return(Pawn)
+        result = chess_game.save_piece_info(dummy_piece)
+        expect(result).to eq(expected_result)
+      end
+    end
+  end
+
+  describe "#load_piece_from_json" do
+    context "When given piece info" do
+      it "returns the chess piece with that matches given attributes" do
+        piece_info = ['Pawn', 'white']
+        result = chess_game.load_piece_from_json(piece_info)
+        expect(result).to be_kind_of(Pawn)
+        expect(result.color).to eq('white')
+      end
+    end
+  end
+
 
   describe "#get_file_name" do
     context "When file exists" do

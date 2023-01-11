@@ -16,9 +16,24 @@ class Chess
   end
 
   def start_game
-    p1.white
-    p2.black
-    board.add_new_pieces_to_board
+    loop do
+      print 'Do you want to load a saved game?[Y/n]:'
+      input = get_input
+      if input == 'y'
+        load_game
+        play_game
+        break
+      elsif input == 'n'
+        p1.white
+        p2.black
+        board.add_new_pieces_to_board
+        play_game
+        break
+      else
+        puts 'Invalid input'
+        next
+      end
+    end
   end
 
   def play_game
@@ -43,7 +58,7 @@ class Chess
 
   def round(player)
     if check?(player, board)
-      puts "#{player.name} your king is under threat!!",
+      puts "\n\033[31;1;1m#{player.name}\033[0m your king is under threat!!",
            "Save your king or type quit to end the game."
     end
     piece_to_move = get_player_piece(player)
@@ -84,12 +99,13 @@ class Chess
   # given input is valid or not.
   def get_player_piece(player)
     loop do
-      puts "Which piece do you want to move?:"
+      puts "#{player.name}, which piece do you want to move?:"
       input = get_input
       # This conditional checks whether the given input is valid && there is a piece present at the given
       # location
       case
       when input == 'quit'
+        @game_end = true
         return 'quit'
       when valid_format?(input) && board[input] == ""
         print "The location you entered has no chess piece.\n"
@@ -114,7 +130,7 @@ class Chess
     potential_moves = board[piece].generate_potential_moves(piece, board)
     display_potential_moves(potential_moves)
     loop do
-      puts "\nEnter your move or 'x' to choose another piece:"
+      puts "\nEnter your move or enter 'x' to choose another piece:"
       move = get_input
       case
       when move == 'x'
