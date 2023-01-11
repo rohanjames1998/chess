@@ -101,13 +101,16 @@ class Chess
     loop do
       puts "#{player.name}, which piece do you want to move?:"
       input = get_input
-      # This conditional checks whether the given input is valid && there is a piece present at the given
-      # location
       case
+      when input == 'save'
+        save_game
+        next
       when input == 'quit'
         @game_end = true
         return 'quit'
       when valid_format?(input) && board[input] == ""
+        # This conditional checks whether the given input is valid && there is a piece present at the given
+        # location
         print "The location you entered has no chess piece.\n"
         next
       when valid_input?(input, player) && board[input] != ""
@@ -250,7 +253,7 @@ class Chess
       'p2_name' => p2.name,
       'p2_color' => p2.color,
       'p2_king_loc' => p2.king_loc,
-      'board' => board.grid,
+      'board' => save_game_board(board.grid),
       'turn' => turn,
       'potential_winner' => potential_winner
     }.to_json
@@ -295,13 +298,73 @@ class Chess
     end
   end
 
-  def convert_json_hash(hash)
+  def save_game_board(grid)
+    hash_to_save = Hash.new
+    row_to_save = Array.new
+    row_num = 8
+    grid.each do |row, array|
+      array.each do |item|
+        if item == ''
+           row_to_save << ''
+        else
+          row_to_save << save_piece_info(item)
+        end
+      end
+      hash_to_save[row_num] = row_to_save
+      row_to_save = []
+      row_num -= 1
+    end
+    hash_to_save
+  end
+
+  def save_piece_info(piece)
+    # Saving each piece's attributes in order to use it when we load game.
+    info_arr = [piece.class, piece.color]
+    info_arr
+  end
+
+  def load_game_board(saved_hash)
+    # This method constructs game grid from saved json hash.
     converted_hash = Hash.new
-    row = 8
-    while row > 0
-      converted_hash[row] = hash[row.to_s]
-      row -= 1
+    converted_row = Array.new
+    row_num = 8
+    saved_hash.each do |row, array|
+      array.each do |item|
+        if item == ''
+          converted_row << ''
+        else
+          converted_row << load_piece_from_json(item)
+        end
+        converted_hash[row_num] = converted_row
+        converted_row = []
+        row_num -= 1
+      end
     end
     converted_hash
+  end
+
+  def load_piece_from_json(piece_info)
+    case
+    when piece_info[0] == 'Pawn'
+      piece = Pawn.new
+    when piece_info[0] == 'Rook'
+      piece = Rook.new
+    when piece_info[0] == 'Knight'
+      piece = Knight.new
+    when piece_info[0] == 'Bishop'
+      piece = Bishop.new
+    when piece_info[0] == 'Queen'
+      piece = Queen.new
+    when piece_info[0] == 'King'
+      piece = King.new
+    end
+
+    # Adding color to piece
+    if piece_info[1] == 'white'
+      piece.white
+    else
+      piece.black
+    end
+    piece
   end
 end
