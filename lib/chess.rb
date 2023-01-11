@@ -20,7 +20,12 @@ class Chess
       print 'Do you want to load a saved game?[Y/n]:'
       input = get_input
       if input == 'y'
-        load_game
+        begin
+          load_game
+        rescue StandardError
+          puts "ERROR: Cannot load saved file."
+          next
+        end
         play_game
         break
       elsif input == 'n'
