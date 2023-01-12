@@ -187,7 +187,9 @@ class Chess
       player.king_loc = move
       board[piece] = ""
     elsif board[piece].is_a?(Pawn) && board[piece].first_move == true
-      board[piece].first_move_check
+      board[move] = board[piece]
+      board[move].first_move_check
+      board[piece] = ""
     else
       board[move] = board[piece]
       board[piece] = ""
@@ -384,10 +386,6 @@ class Chess
     piece
   end
 
-  def load_pawn(info)
-  end
-
-
   def save_turns(player)
     # Saves data for both @turn and @potential_winner
     if player.color == 'white'
@@ -415,7 +413,7 @@ class Chess
 
   def load_pawn(info)
     pawn = Pawn.new
-    pawn.first_move_check if info[2] == 'false'
+    pawn.first_move_check if info[2] == false
     pawn
   end
 end
