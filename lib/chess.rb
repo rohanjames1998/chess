@@ -17,22 +17,27 @@ class Chess
 
   def start_game
     loop do
-      print 'Do you want to load a saved game?[Y/n]:'
       input = get_input
-      if input == 'y'
-        begin
-          load_game
-        rescue StandardError
-          puts "ERROR: Cannot load saved file."
-          next
-        end
-        play_game
-        break
-      elsif input == 'n'
+      case
+      when input == '1'
         @p1.white
         @p2.black
         board.add_new_pieces_to_board
         play_game
+        break
+      when input == '2'
+        begin
+          load_game
+        rescue StandardError
+          puts "\033[31;1;4mERROR: Cannot load saved file.\033[0m"
+          next
+        end
+        play_game
+        break
+      when input == '3'
+        instructions
+        next
+      when input == 'quit'
         break
       else
         puts 'Invalid input'
@@ -415,5 +420,27 @@ class Chess
     pawn = Pawn.new
     pawn.first_move_check if info[2] == false
     pawn
+  end
+
+  def instructions
+    puts <<-INSTRUCTIONS
+    Hello and welcome to chess!
+    The rules are pretty simple:
+    1. On the top(column) and bottom(row) of the board you can see the coordinates.
+       In order to select a piece to move just type piece coordinates like this: 2b (2 = row, b = column)
+       After you have successfully selected your piece all the legal moves will be marked by an: \u2718
+       Enter your legal move in the same fashion you choose your piece to move your piece on the desired location.
+
+    2. When playing your turn you can save the game by typing 'save' into console.
+
+    3. If you want to quit the game then just type quit in the console.
+
+    4. If you are unfamiliar with the rules of chess please visit:
+          https://en.wikipedia.org/wiki/Rules_of_chess
+
+          Stuck here? Enter 1 to start a new game; or 2 to load a saved game.
+          If you notice any bugs please report them to me through discord (Dreamer#8497)
+          Thank you for checking out my project it means a lot :-)
+      INSTRUCTIONS
   end
 end
