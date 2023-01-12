@@ -1,7 +1,6 @@
 require_relative '../lib/chess'
 
 describe Chess do
-
   subject(:chess_game) { described_class.new }
   let(:player1) { instance_double(Player) }
   let(:player2) { instance_double(Player) }
@@ -30,14 +29,14 @@ describe Chess do
     end
     context 'When player wants to load a saved game' do
       it 'calls load_game method' do
-        allow(chess_game).to receive(:gets).and_return('y')
+        allow(chess_game).to receive(:gets).and_return('2')
         expect(chess_game).to receive(:load_game).once
         chess_game.start_game
       end
     end
     context 'When player wants to play an new game' do
       it 'Makes a new game' do
-        allow(chess_game).to receive(:gets).and_return('n')
+        allow(chess_game).to receive(:gets).and_return('1')
         expect(chess_game.p1).to receive(:white)
         expect(chess_game.p2).to receive(:black)
         expect(chess_game.board).to receive(:add_new_pieces_to_board)
@@ -46,16 +45,30 @@ describe Chess do
     end
     context 'When given invalid input' do
       it 'loops until valid input is given' do
-        allow(chess_game).to receive(:gets).and_return('x', 'n')
+        allow(chess_game).to receive(:gets).and_return('x', 'quit')
         expect(chess_game).to receive(:gets).twice
         chess_game.start_game
       end
     end
     context "When there is an error loading the saved file" do
       it "rescue's the error" do
-        allow(chess_game).to receive(:gets).and_return('y', 'n')
+        allow(chess_game).to receive(:gets).and_return('2', '1')
         allow(chess_game).to receive(:load_game).and_raise(StandardError)
         expect(chess_game).to receive(:gets).twice
+        chess_game.start_game
+      end
+    end
+    context "When user wants to quit" do
+      it "breaks the loop" do
+        allow(chess_game).to receive(:gets).and_return('quit')
+        expect(chess_game).to receive(:gets).once
+        chess_game.start_game
+      end
+    end
+    context "When user wants to read the instructions" do
+      it "calls #instruction" do
+        allow(chess_game).to receive(:gets).and_return('3', 'quit')
+        expect(chess_game).to receive(:instructions)
         chess_game.start_game
       end
     end
@@ -91,7 +104,6 @@ describe Chess do
     end
   end
 
-
   describe "#valid_format?" do
     context "When given location's format is valid" do
       it "returns true" do
@@ -115,9 +127,9 @@ describe Chess do
     end
     context "When location format is invalid" do
       it "returns false" do
-      invalid_loc = "12a"
-      returned_val = chess_game.valid_format?(invalid_loc)
-      expect(returned_val).to eq(false)
+        invalid_loc = "12a"
+        returned_val = chess_game.valid_format?(invalid_loc)
+        expect(returned_val).to eq(false)
       end
     end
   end
@@ -144,7 +156,6 @@ describe Chess do
       end
     end
   end
-
 
   describe "#get_player_piece" do
     context "When given valid input" do
@@ -181,12 +192,11 @@ describe Chess do
         # Passing quit to break the loop. Because after saving the loop restarts.
         expect(chess_game).to receive(:save_game)
         chess_game.get_player_piece(player1)
-        end
       end
     end
+  end
 
   describe "#get_input" do
-
     RSpec::Matchers.define :have_any_upcase_letters do
       match do |string|
         string.each_char do |letter|
@@ -263,10 +273,9 @@ describe Chess do
   end
 
   describe "#display_potential_moves" do
-
     context "When called" do
       it "adds potential move indicator symbol on board where player can their piece" do
-        indicator ="\u2718"
+        indicator = "\u2718"
         potential_moves = ['4a', '3a']
         board = chess_game.board
         chess_game.display_potential_moves(potential_moves)
@@ -278,7 +287,7 @@ describe Chess do
 
   describe "#valid_move?" do
     before do
-    allow(chess_game.board).to receive(:[]).and_return(dummy_piece)
+      allow(chess_game.board).to receive(:[]).and_return(dummy_piece)
     end
     context "When given move has invalid format" do
       it "returns false" do
@@ -292,11 +301,11 @@ describe Chess do
     end
     context "When given move is not included in potential moves" do
       it "returns false" do
-      piece = '2a'
-      move = '5a'
-      potential_moves = ['3a', '4a']
-      returned_val = chess_game.valid_move?(move, piece, potential_moves)
-      expect(returned_val).to eq(false)
+        piece = '2a'
+        move = '5a'
+        potential_moves = ['3a', '4a']
+        returned_val = chess_game.valid_move?(move, piece, potential_moves)
+        expect(returned_val).to eq(false)
       end
     end
     context "When given input is valid and included in potential moves" do
@@ -311,7 +320,6 @@ describe Chess do
   end
 
   describe "#move_piece" do
-
     before do
       allow(chess_game.board).to receive(:is_a?).and_return(false)
     end
@@ -359,7 +367,7 @@ describe Chess do
       it "removes all potential move indicators from the board" do
         potential_moves = ['4a', '5a', '6a']
         board = chess_game.board
-        indicator ="\u2718"
+        indicator = "\u2718"
         board['4a'] = indicator
         board['5a'] = indicator
         board['6a'] = indicator
@@ -372,7 +380,7 @@ describe Chess do
         board = chess_game.board
         expected_result = ['', dummy_piece, '']
         result = []
-        indicator ="\u2718"
+        indicator = "\u2718"
         board['3a'] = indicator
         board['3b'] = dummy_piece
         board['3c'] = indicator
@@ -477,7 +485,7 @@ describe Chess do
         dup_name = 'my_game'
         alt_name = 'our_game'
         allow(chess_game).to receive(:get_input).and_return(dup_name, alt_name)
-        allow(File).to receive(:exist?).and_return(true, true, false) #First true is for directory.
+        allow(File).to receive(:exist?).and_return(true, true, false) # First true is for directory.
         expect(chess_game).to receive(:get_input).twice
         chess_game.save_game
       end
@@ -507,17 +515,18 @@ describe Chess do
   end
 
   describe "#load_game" do
-
-    let(:dummy_board) { {1 => ['', '', '', '', '', 'k']} }
-    let(:saved_data) { {'p1_name' => 'jon',
-      'p1_color' => 'white',
-      'p1_king_loc' => '1e',
-      'p2_name' => 'snow',
-      'p2_color' => 'black',
-      'p2_king_loc' => '8e',
-      'board' => dummy_board,
-      'turn' => 'player1',
-      'potential_winner' => 'player2'} }
+    let(:dummy_board) { { 1 => ['', '', '', '', '', 'k'] } }
+    let(:saved_data) {
+      { 'p1_name' => 'jon',
+        'p1_color' => 'white',
+        'p1_king_loc' => '1e',
+        'p2_name' => 'snow',
+        'p2_color' => 'black',
+        'p2_king_loc' => '8e',
+        'board' => dummy_board,
+        'turn' => 'player1',
+        'potential_winner' => 'player2' }
+    }
     before do
       # Passing a dummy hash so we can check it loads ok in the game.
       allow(chess_game).to receive(:convert_json_hash).and_return(dummy_board)
@@ -558,7 +567,6 @@ describe Chess do
   end
 
   describe "#get_saved_file" do
-
     before do
       allow(File).to receive(:read)
       allow(JSON).to receive(:parse)
@@ -599,16 +607,16 @@ describe Chess do
     # Box here refers to item of array (i.e., element of the array)
     context "When box is empty" do
       it "pushes empty box on the row of hash" do
-        saved_hash = { '8' => [''], '7' => ['']}
-        expected_result = { 8 => [''], 7 => ['']}
+        saved_hash = { '8' => [''], '7' => [''] }
+        expected_result = { 8 => [''], 7 => [''] }
         result = chess_game.load_game_board(saved_hash)
         expect(result).to eq(expected_result)
       end
     end
     context "When box has a piece in it" do
       it "pushes box with the piece" do
-        saved_hash = {'8' => [['Pawn', 'white']]}
-        expected_result = {8 => [dummy_piece]}
+        saved_hash = { '8' => [['Pawn', 'white']] }
+        expected_result = { 8 => [dummy_piece] }
         allow(chess_game).to receive(:load_piece_from_json).and_return(dummy_piece)
         result = chess_game.load_game_board(saved_hash)
         expect(result).to eq(expected_result)
@@ -619,17 +627,17 @@ describe Chess do
   describe "#save_game_board" do
     context "When called" do
       it "converts piece's information to an array" do
-      #This array will be used to recreate board when
-      #we load the game afterwards.
-      hash_to_save = { 8 => [dummy_piece] }
-      expected_result = { 8 => [[Pawn, 'white', true]] }
-      allow(chess_game).to receive(:save_piece_info).and_return([Pawn, 'white', true])
-      result = chess_game.save_game_board(hash_to_save)
-      expect(result).to eq(expected_result)
+        # This array will be used to recreate board when
+        # we load the game afterwards.
+        hash_to_save = { 8 => [dummy_piece] }
+        expected_result = { 8 => [[Pawn, 'white', true]] }
+        allow(chess_game).to receive(:save_piece_info).and_return([Pawn, 'white', true])
+        result = chess_game.save_game_board(hash_to_save)
+        expect(result).to eq(expected_result)
       end
       it "pushes empty box as it is" do
-        hash_to_save = { 8=> [''] }
-        expected_result = { 8=> [''] }
+        hash_to_save = { 8 => [''] }
+        expected_result = { 8 => [''] }
         result = chess_game.save_game_board(hash_to_save)
         expect(result).to eq(expected_result)
       end
@@ -678,7 +686,6 @@ describe Chess do
     end
   end
 
-
   describe "#get_file_name" do
     context "When file exists" do
       it "returns file name with full path" do
@@ -720,8 +727,8 @@ describe Chess do
   describe "#load_turn" do
     context "When saved turn is player1" do
       it "sets @turn to @player1" do
-        #We are gonna save the string 'player1' or
-        #'player2' to indicate which player's turn it was.
+        # We are gonna save the string 'player1' or
+        # 'player2' to indicate which player's turn it was.
         saved_turn = 'player1'
         chess_game.load_turn(saved_turn)
         expect(chess_game.turn).to eq(chess_game.p1)
@@ -729,7 +736,7 @@ describe Chess do
     end
     context "When saved turn is player2" do
       it "sets @turn to @player2" do
-       saved_turn = 'player2'
+        saved_turn = 'player2'
         chess_game.load_turn(saved_turn)
         expect(chess_game.turn).to eq(chess_game.p2)
       end
@@ -738,8 +745,8 @@ describe Chess do
 
   describe "#load_potential_winner" do
     context "When potential winner is player1" do
-      #Same as above for @potential_winner we are gonna
-      #save a string indicating which player was the @potential_winner.
+      # Same as above for @potential_winner we are gonna
+      # save a string indicating which player was the @potential_winner.
       it "sets @potential_winner to player1" do
         saved_winner = 'player1'
         chess_game.load_potential_winner(saved_winner)
@@ -765,7 +772,7 @@ describe Chess do
     end
     context "When saved info indicates that pawn has made its first move" do
       it "calls #first_move_check on pawn" do
-        #This method changes first_move to false.
+        # This method changes first_move to false.
         info = ['Pawn', 'black', false]
         pawn_piece = chess_game.load_pawn(info)
         expect(pawn_piece.first_move).to eq(false)
@@ -780,5 +787,3 @@ describe Chess do
     end
   end
 end
-
-
