@@ -11,18 +11,19 @@ module Movement
     row = initial_loc[0].to_i
     col = initial_loc[1].ord
     normal_moves = []
-    kill_moves = []
+    potential_kill_moves = []
 
     if first_move
       normal_moves << (row + 2).to_s + col.chr
       normal_moves << (row + 1).to_s + col.chr
-      kill_moves << (row + 1).to_s + (col + 1).chr
-      kill_moves << (row + 1).to_s + (col - 1).chr
+      potential_kill_moves << (row + 1).to_s + (col + 1).chr
+      potential_kill_moves << (row + 1).to_s + (col - 1).chr
     else
       normal_moves << (row + 1).to_s + col.chr
-      kill_moves << (row + 1).to_s + (col + 1).chr
-      kill_moves << (row + 1).to_s + (col - 1).chr
+      potential_kill_moves << (row + 1).to_s + (col + 1).chr
+      potential_kill_moves << (row + 1).to_s + (col - 1).chr
     end
+    kill_moves = remove_out_of_board_moves(potential_kill_moves)
 
     moves = [normal_moves, kill_moves]
     moves
@@ -32,18 +33,19 @@ module Movement
     row = initial_loc[0].to_i
     col = initial_loc[1].ord
     normal_moves = []
-    kill_moves = []
+    potential_kill_moves = []
 
     if first_move
       normal_moves << (row - 2).to_s + col.chr
       normal_moves << (row - 1).to_s + col.chr
-      kill_moves << (row - 1).to_s + (col + 1).chr
-      kill_moves << (row - 1).to_s + (col - 1).chr
+      potential_kill_moves << (row - 1).to_s + (col + 1).chr
+      potential_kill_moves << (row - 1).to_s + (col - 1).chr
     else
       normal_moves << (row - 1).to_s + col.chr
-      kill_moves << (row - 1).to_s + (col + 1).chr
-      kill_moves << (row - 1).to_s + (col - 1).chr
+      potential_kill_moves << (row - 1).to_s + (col + 1).chr
+      potential_kill_moves << (row - 1).to_s + (col - 1).chr
     end
+    kill_moves = remove_out_of_board_moves(potential_kill_moves)
 
     moves = [normal_moves, kill_moves]
     moves
@@ -72,7 +74,14 @@ module Movement
         break
       end
     end
-    potential_left_moves
+    # Yielding each move if block given (for #generate_potential_moves that returns 1d array of all potential moves).
+    if block_given?
+      potential_left_moves.each do |move|
+        yield move
+      end
+    else
+      return potential_left_moves
+    end
   end
 
   def generate_right_moves(initial_loc, board, color)
@@ -94,7 +103,14 @@ module Movement
         break
       end
     end
-    potential_right_moves
+
+    if block_given?
+      potential_right_moves.each do |move|
+        yield move
+      end
+    else
+      return potential_right_moves
+    end
   end
 
   def generate_up_moves(initial_loc, board, color)
@@ -118,7 +134,14 @@ module Movement
         break
       end
     end
-    potential_top_moves
+
+    if block_given?
+      potential_top_moves.each do |move|
+        yield move
+      end
+    else
+      return potential_top_moves
+    end
   end
 
   def generate_down_moves(initial_loc, board, color)
@@ -142,7 +165,14 @@ module Movement
         break
       end
     end
-    potential_down_moves
+
+    if block_given?
+      potential_down_moves.each do |move|
+        yield move
+      end
+    else
+      return potential_down_moves
+    end
   end
 
   def generate_knight_moves(initial_loc)
@@ -158,7 +188,8 @@ module Movement
     all_moves << (row + 1).to_s + (col - 2).chr #left-left-up
     all_moves << (row - 1).to_s + (col + 2).chr #right-right-down
     all_moves << (row - 1).to_s + (col - 2).chr #left-left-down
-    return all_moves
+    potential_moves = remove_out_of_board_moves(all_moves)
+    potential_moves
   end
 
   # top_right, top_left, down_right, and down_left all generate
@@ -187,7 +218,13 @@ module Movement
         break
       end
     end
-    valid_moves
+    if block_given?
+      valid_moves.each do |move|
+        yield move
+      end
+    else
+      return valid_moves
+    end
   end
 
   def generate_top_left_moves(initial_loc, board, color)
@@ -213,7 +250,14 @@ module Movement
         break
       end
     end
-    valid_moves
+
+    if block_given?
+      valid_moves.each do |move|
+        yield move
+      end
+    else
+      return valid_moves
+    end
   end
 
   def generate_down_right_moves(initial_loc, board, color)
@@ -239,7 +283,14 @@ module Movement
         break
       end
     end
-    valid_moves
+
+    if block_given?
+      valid_moves.each do |move|
+        yield move
+      end
+    else
+      return valid_moves
+    end
   end
 
   def generate_down_left_moves(initial_loc, board, color)
@@ -265,21 +316,29 @@ module Movement
         break
       end
     end
-    valid_moves
+
+    if block_given?
+      valid_moves.each do |move|
+        yield move
+      end
+    else
+      return valid_moves
+    end
   end
 
   def generate_king_moves(initial_loc)
     row = initial_loc[0].to_i
     col = initial_loc[1].ord
-    potential_moves = []
-    potential_moves << (row + 1).to_s + (col - 1).chr #top-left
-    potential_moves << (row + 1).to_s + col.chr # top
-    potential_moves << (row + 1).to_s + (col + 1).chr #top-right
-    potential_moves << row.to_s + (col - 1).chr #left
-    potential_moves << row.to_s + (col + 1).chr # right
-    potential_moves << (row - 1).to_s + (col - 1).chr #down-left
-    potential_moves << (row - 1).to_s + col.chr #down
-    potential_moves << (row - 1).to_s + (col + 1).chr #down-right
+    all_moves = []
+    all_moves << (row + 1).to_s + (col - 1).chr #top-left
+    all_moves << (row + 1).to_s + col.chr # top
+    all_moves << (row + 1).to_s + (col + 1).chr #top-right
+    all_moves << row.to_s + (col - 1).chr #left
+    all_moves << row.to_s + (col + 1).chr # right
+    all_moves << (row - 1).to_s + (col - 1).chr #down-left
+    all_moves << (row - 1).to_s + col.chr #down
+    all_moves << (row - 1).to_s + (col + 1).chr #down-right
+    potential_moves = remove_out_of_board_moves(all_moves)
     potential_moves
   end
 
