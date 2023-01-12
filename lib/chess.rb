@@ -29,8 +29,8 @@ class Chess
         play_game
         break
       elsif input == 'n'
-        p1.white
-        p2.black
+        @p1.white
+        @p2.black
         board.add_new_pieces_to_board
         play_game
         break
@@ -52,6 +52,8 @@ class Chess
   end
 
   def change_turns
+    #This method keeps track of turns and who can win
+    #if there is a check and the player doesn't save their king.
     if turn == p1
       @turn = p2
       @potential_winner = p1
@@ -184,6 +186,8 @@ class Chess
       board[move] = board[piece]
       player.king_loc = move
       board[piece] = ""
+    elsif board[piece].is_a?(Pawn) && board[piece].first_move == true
+      board[piece].first_move_check
     else
       board[move] = board[piece]
       board[piece] = ""
@@ -259,8 +263,8 @@ class Chess
       'p2_color' => p2.color,
       'p2_king_loc' => p2.king_loc,
       'board' => save_game_board(board.grid),
-      'turn' => turn,
-      'potential_winner' => potential_winner
+      'turn' => save_turns(turn),
+      'potential_winner' => save_turns(potential_winner)
     }.to_json
   end
 
@@ -272,9 +276,9 @@ class Chess
     p2.name = saved_data['p2_name']
     p2.color = saved_data['p2_color']
     p2.king_loc = saved_data['p2_king_loc']
-    board.grid = convert_json_hash(saved_data['board'])
-    @turn = saved_data['turn']
-    @potential_winner = saved_data['potential_winner']
+    board.grid = load_game_board(saved_data['board'])
+    @turn = load_turn(saved_data['turn'])
+    @potential_winner = load_potential_winner(saved_data['potential_winner'])
   end
 
   def get_saved_file
@@ -324,7 +328,13 @@ class Chess
 
   def save_piece_info(piece)
     # Saving each piece's attributes in order to use it when we load game.
-    info_arr = [piece.class, piece.color]
+    if piece.is_a?(Pawn)
+      #Since pawn can move has different first_move then all others
+      # We need to keep track of it when we save game.
+      info_arr = [piece.class, piece.color, piece.first_move]
+    else
+      info_arr = [piece.class, piece.color]
+    end
     info_arr
   end
 
@@ -340,18 +350,19 @@ class Chess
         else
           converted_row << load_piece_from_json(item)
         end
-        converted_hash[row_num] = converted_row
-        converted_row = []
-        row_num -= 1
       end
+      converted_hash[row_num] = converted_row
+      converted_row = []
+      row_num -= 1
     end
     converted_hash
   end
 
   def load_piece_from_json(piece_info)
+    # Since pawn has the variable @first_move we will treat it differently.
     case
     when piece_info[0] == 'Pawn'
-      piece = Pawn.new
+      piece = load_pawn(piece_info)
     when piece_info[0] == 'Rook'
       piece = Rook.new
     when piece_info[0] == 'Knight'
@@ -371,5 +382,40 @@ class Chess
       piece.black
     end
     piece
+  end
+
+  def load_pawn(info)
+  end
+
+
+  def save_turns(player)
+    # Saves data for both @turn and @potential_winner
+    if player.color == 'white'
+      return 'player1'
+    else
+      return 'player2'
+    end
+  end
+
+  def load_turn(player)
+    if player == 'player1'
+      @turn = @p1
+    else
+      @turn = @p2
+    end
+  end
+
+  def load_potential_winner(player)
+    if player == 'player1'
+      @potential_winner = @p1
+    else
+      @potential_winner = @p2
+    end
+  end
+
+  def load_pawn(info)
+    pawn = Pawn.new
+    pawn.first_move_check if info[2] == 'false'
+    pawn
   end
 end
