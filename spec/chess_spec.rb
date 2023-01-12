@@ -340,6 +340,18 @@ describe Chess do
         chess_game.move_piece(piece, move, player1)
       end
     end
+    context "When player chooses to move a pawn which wasn't moved before" do
+      it "calls changes first_move to false for future moves" do
+        piece = '2a'
+        move = '4a'
+        # First for king check and second for pawn
+        allow(chess_game.board).to receive(:[]).and_return(dummy_piece)
+        allow(dummy_piece).to receive(:is_a?).and_return(false, true)
+        allow(dummy_piece).to receive(:first_move).and_return(true)
+        expect(dummy_piece).to receive(:first_move_check)
+        chess_game.move_piece(piece, move, player1)
+      end
+    end
   end
 
   describe "#remove_potential_moves_indicator" do
