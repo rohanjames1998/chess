@@ -622,8 +622,8 @@ describe Chess do
       #This array will be used to recreate board when
       #we load the game afterwards.
       hash_to_save = { 8 => [dummy_piece] }
-      expected_result = { 8 => [[Pawn, 'white']] }
-      allow(chess_game).to receive(:save_piece_info).and_return([Pawn, 'white'])
+      expected_result = { 8 => [[Pawn, 'white', true]] }
+      allow(chess_game).to receive(:save_piece_info).and_return([Pawn, 'white', true])
       result = chess_game.save_game_board(hash_to_save)
       expect(result).to eq(expected_result)
       end
@@ -661,7 +661,7 @@ describe Chess do
   describe "#load_piece_from_json" do
     context "When saved piece is a pawn" do
       it "returns the chess piece that matches given attributes" do
-        piece_info = ['Pawn', 'white', 'false']
+        piece_info = ['Pawn', 'white', false]
         result = chess_game.load_piece_from_json(piece_info)
         expect(result).to be_kind_of(Pawn)
         expect(result.color).to eq('white')
@@ -758,7 +758,7 @@ describe Chess do
   describe "#load_pawn" do
     context "When called" do
       it "returns a pawn" do
-        info = ['Pawn', 'black', 'false']
+        info = ['Pawn', 'black', false]
         result = chess_game.load_pawn(info)
         expect(result).to be_kind_of(Pawn)
       end
@@ -766,14 +766,14 @@ describe Chess do
     context "When saved info indicates that pawn has made its first move" do
       it "calls #first_move_check on pawn" do
         #This method changes first_move to false.
-        info = ['Pawn', 'black', 'false']
+        info = ['Pawn', 'black', false]
         pawn_piece = chess_game.load_pawn(info)
         expect(pawn_piece.first_move).to eq(false)
       end
     end
     context "When saved info indicates that pawn has not made its first move" do
       it "doesn't call #first_move_check on pawn" do
-        info = ['Pawn', 'white', 'true']
+        info = ['Pawn', 'white', true]
         pawn_piece = chess_game.load_pawn(info)
         expect(pawn_piece.first_move).to eq(true)
       end
