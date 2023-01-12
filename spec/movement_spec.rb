@@ -253,54 +253,54 @@ describe Movement do
     end
   end
 
-    describe "#generate_down_moves" do
-      context "When there are no piece at bot" do
-        it "returns all empty bot locations upto board end" do
-          initial_loc = '6a'
-          color = 'white'
-          expected_result = ['5a', '4a', '3a', '2a', '1a']
-          allow(board).to receive(:[]).and_return('')
-          potential_bot_moves = dummy_class.generate_down_moves(initial_loc, board, color)
-          expect(potential_bot_moves).to eq(expected_result)
-        end
-      end
-      context "When there is an ally piece at bot" do
-        it "returns all potential moves upto ally piece" do
-          initial_loc = '7f'
-          color = 'white'
-          expected_result = ['6f', '5f']
-          allow(board).to receive(:[]).and_return('', '', dummy_piece)
-          allow(dummy_piece).to receive(:color).and_return('white')
-          potential_bot_moves = dummy_class.generate_down_moves(initial_loc, board, color)
-          expect(potential_bot_moves).to eq(expected_result)
-        end
-      end
-      context "When there is an enemy piece at bot" do
-        it "returns all potential moves including enemy piece's location" do
-          initial_loc = '5b'
-          color = 'white'
-          expected_result = ['4b', '3b', '2b']
-          allow(board).to receive(:[]).and_return('', '', dummy_piece)
-          allow(dummy_piece).to receive(:color).and_return('black')
-          potential_bot_moves = dummy_class.generate_down_moves(initial_loc, board , color)
-          expect(potential_bot_moves).to eq(expected_result)
-        end
-      end
-      context "When called on piece that is on the bottom" do
-        it "doesn't return out of board moves" do
-          initial_loc = '1g'
-          color = 'white'
-          expected_result = []
-          potential_bot_moves = dummy_class.generate_down_moves(initial_loc, board , color)
-          expect(potential_bot_moves).to eq(expected_result)
-        end
+  describe "#generate_down_moves" do
+    context "When there are no piece at bot" do
+      it "returns all empty bot locations upto board end" do
+        initial_loc = '6a'
+        color = 'white'
+        expected_result = ['5a', '4a', '3a', '2a', '1a']
+        allow(board).to receive(:[]).and_return('')
+        potential_bot_moves = dummy_class.generate_down_moves(initial_loc, board, color)
+        expect(potential_bot_moves).to eq(expected_result)
       end
     end
+    context "When there is an ally piece at bot" do
+      it "returns all potential moves upto ally piece" do
+        initial_loc = '7f'
+        color = 'white'
+        expected_result = ['6f', '5f']
+        allow(board).to receive(:[]).and_return('', '', dummy_piece)
+        allow(dummy_piece).to receive(:color).and_return('white')
+        potential_bot_moves = dummy_class.generate_down_moves(initial_loc, board, color)
+        expect(potential_bot_moves).to eq(expected_result)
+      end
+    end
+    context "When there is an enemy piece at bot" do
+      it "returns all potential moves including enemy piece's location" do
+        initial_loc = '5b'
+        color = 'white'
+        expected_result = ['4b', '3b', '2b']
+        allow(board).to receive(:[]).and_return('', '', dummy_piece)
+        allow(dummy_piece).to receive(:color).and_return('black')
+        potential_bot_moves = dummy_class.generate_down_moves(initial_loc, board, color)
+        expect(potential_bot_moves).to eq(expected_result)
+      end
+    end
+    context "When called on piece that is on the bottom" do
+      it "doesn't return out of board moves" do
+        initial_loc = '1g'
+        color = 'white'
+        expected_result = []
+        potential_bot_moves = dummy_class.generate_down_moves(initial_loc, board, color)
+        expect(potential_bot_moves).to eq(expected_result)
+      end
+    end
+  end
 
   describe "#generate_knight_moves" do
     context "When called" do
       it "returns total of 8 moves" do
-        initial_loc = '3a'
+        initial_loc = '4e'
         moves = dummy_class.generate_knight_moves(initial_loc)
         expect(moves.length).to eq(8)
       end
