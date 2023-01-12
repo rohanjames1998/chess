@@ -22,15 +22,15 @@ class Queen
 
   def generate_potential_moves(initial_loc, board)
     potential_moves = []
-    potential_moves << generate_up_moves(initial_loc, board)
-    potential_moves << generate_up_right_moves(initial_loc, board)
-    potential_moves << generate_up_left_moves(initial_loc, board)
-    potential_moves << generate_right_moves(initial_loc, board)
-    potential_moves << generate_down_moves(initial_loc, board)
-    potential_moves << generate_down_right_moves(initial_loc, board)
-    potential_moves << generate_down_left_moves(initial_loc, board)
-    potential_moves << generate_left_moves(initial_loc, board)
-
+    generate_up_moves(initial_loc, board, color) { |move| potential_moves << move}
+    generate_top_right_moves(initial_loc, board, color) { |move| potential_moves << move}
+    generate_top_left_moves(initial_loc, board, color) { |move| potential_moves << move}
+    generate_right_moves(initial_loc, board, color) { |move| potential_moves << move}
+    generate_down_moves(initial_loc, board, color) { |move| potential_moves << move}
+    generate_down_right_moves(initial_loc, board, color) { |move| potential_moves << move}
+    generate_down_left_moves(initial_loc, board, color) { |move| potential_moves << move}
+    generate_left_moves(initial_loc, board, color) { |move| potential_moves << move}
     potential_moves
   end
 end
+
