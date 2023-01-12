@@ -2,7 +2,7 @@ require_relative "movement"
 require_relative "board"
 
 class Pawn
-  attr_reader :unicode, :color
+  attr_reader :unicode, :color, :first_move
 
   include Movement
 
@@ -23,12 +23,11 @@ class Pawn
   end
 
   def generate_potential_moves(initial_loc, board)
-    if self.color == 'white'
+    if color == 'white'
       all_possible_moves = generate_white_pawn_moves(initial_loc, @first_move)
     else
       all_possible_moves = generate_black_pawn_moves(initial_loc, @first_move)
     end
-    first_move_check
     potential_moves = check_valid_moves(all_possible_moves, board)
     potential_moves
   end
@@ -57,6 +56,7 @@ class Pawn
   end
 
   def first_move_check
+    # This function makes sure pawn only moves two steps when its the first move.
     # Changing @first_move to false if it is true.
     if @first_move
       @first_move = false
