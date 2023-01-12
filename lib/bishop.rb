@@ -1,8 +1,9 @@
 require_relative 'board'
 require_relative 'movement'
 class Bishop
-
   attr_reader :unicode, :color
+
+  include Movement
 
   def initialize
     @unicode = ''
@@ -21,12 +22,10 @@ class Bishop
 
   def generate_potential_moves(initial_loc, board)
     potential_moves = []
-
-    potential_moves << generate_top_right_moves(initial_loc, board)
-    potential_moves << generate_top_left_moves(initial_loc, board)
-    potential_moves << generate_down_right_moves(initial_loc, board)
-    potential_moves << generate_down_left_moves(initial_loc, board)
-
+    generate_top_right_moves(initial_loc, board, color) { |move| potential_moves << move }
+    generate_top_left_moves(initial_loc, board, color) { |move| potential_moves << move }
+    generate_down_right_moves(initial_loc, board, color) { |move| potential_moves << move }
+    generate_down_left_moves(initial_loc, board, color) { |move| potential_moves << move }
     potential_moves
   end
 end
