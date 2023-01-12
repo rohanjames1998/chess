@@ -504,12 +504,15 @@ describe Chess do
       'p2_color' => 'black',
       'p2_king_loc' => '8e',
       'board' => dummy_board,
-      'turn' => 'p2',
-      'potential_winner' => 'p1'} }
+      'turn' => 'player1',
+      'potential_winner' => 'player2'} }
     before do
       # Passing a dummy hash so we can check it loads ok in the game.
       allow(chess_game).to receive(:convert_json_hash).and_return(dummy_board)
       allow(chess_game).to receive(:get_saved_file).and_return(saved_data)
+      allow(chess_game).to receive(:load_game_board)
+      allow(chess_game).to receive(:load_turn)
+      allow(chess_game).to receive(:load_potential_winner)
     end
 
     context "When called" do
@@ -537,18 +540,8 @@ describe Chess do
         expect(chess_game.p2).to receive(:king_loc=).with('8e')
         chess_game.load_game
       end
-      it "sets board's grid to saved grid" do
-        expect(chess_game.board).to receive(:grid=).with(dummy_board)
-        chess_game.load_game
-      end
-      it "sets turn to saved turn" do
-        chess_game.load_game
-        expect(chess_game.turn).to eq('p2')
-      end
-      it "sets potential_winner to saved potential_winner" do
-        chess_game.load_game
-        expect(chess_game.potential_winner).to eq('p1')
-      end
+      # Since @board, @turn, and @potential_winner are
+      # set by different methods we are not going to test them here.
     end
   end
 
@@ -632,10 +625,21 @@ describe Chess do
   end
 
   describe "#save_piece_info" do
-    context "When given a piece" do
-      it "returns an array with piece's class and color" do
-        expected_result = [Pawn, 'white']
+    context "When given piece is a pawn" do
+      it "returns an array with pawn's class, color, and status of first_move" do
+        expected_result = [Pawn, 'white', true]
+        allow(dummy_piece).to receive(:first_move).and_return(true)
         allow(dummy_piece).to receive(:class).and_return(Pawn)
+        allow(dummy_piece).to receive(:is_a?).and_return(true)
+        result = chess_game.save_piece_info(dummy_piece)
+        expect(result).to eq(expected_result)
+      end
+    end
+    context "When given piece is any piece other then pawn" do
+      it "returns an array with piece's class and color" do
+        expected_result = [Rook, 'black']
+        allow(dummy_piece).to receive(:class).and_return(Rook)
+        allow(dummy_piece).to receive(:color).and_return('black')
         result = chess_game.save_piece_info(dummy_piece)
         expect(result).to eq(expected_result)
       end
@@ -643,12 +647,21 @@ describe Chess do
   end
 
   describe "#load_piece_from_json" do
-    context "When given piece info" do
-      it "returns the chess piece with that matches given attributes" do
-        piece_info = ['Pawn', 'white']
+    context "When saved piece is a pawn" do
+      it "returns the chess piece that matches given attributes" do
+        piece_info = ['Pawn', 'white', 'false']
         result = chess_game.load_piece_from_json(piece_info)
         expect(result).to be_kind_of(Pawn)
         expect(result.color).to eq('white')
+        expect(result.first_move).to eq(false)
+      end
+    end
+    context "When saved piece is any other than pawn" do
+      it "returns chess piece that matches given attributes" do
+        piece_info = ['Queen', 'black']
+        result = chess_game.load_piece_from_json(piece_info)
+        expect(result).to be_kind_of(Queen)
+        expect(result.color).to eq('black')
       end
     end
   end
@@ -671,6 +684,86 @@ describe Chess do
         allow(File).to receive(:exist?).and_return(false, true)
         expect(chess_game).to receive(:get_input).twice
         chess_game.get_file_name
+      end
+    end
+  end
+
+  describe "#save_turns" do
+    context "When player's color is white" do
+      it "returns player1" do
+        expected_result = 'player1'
+        result = chess_game.save_turns(player1)
+        expect(result).to eq(expected_result)
+      end
+    end
+    context "When player's color is black" do
+      it "returns player2" do
+        expected_result = 'player2'
+        result = chess_game.save_turns(player2)
+        expect(result).to eq(expected_result)
+      end
+    end
+  end
+
+  describe "#load_turn" do
+    context "When saved turn is player1" do
+      it "sets @turn to @player1" do
+        #We are gonna save the string 'player1' or
+        #'player2' to indicate which player's turn it was.
+        saved_turn = 'player1'
+        chess_game.load_turn(saved_turn)
+        expect(chess_game.turn).to eq(chess_game.p1)
+      end
+    end
+    context "When saved turn is player2" do
+      it "sets @turn to @player2" do
+       saved_turn = 'player2'
+        chess_game.load_turn(saved_turn)
+        expect(chess_game.turn).to eq(chess_game.p2)
+      end
+    end
+  end
+
+  describe "#load_potential_winner" do
+    context "When potential winner is player1" do
+      #Same as above for @potential_winner we are gonna
+      #save a string indicating which player was the @potential_winner.
+      it "sets @potential_winner to player1" do
+        saved_winner = 'player1'
+        chess_game.load_potential_winner(saved_winner)
+        expect(chess_game.potential_winner).to eq(chess_game.p1)
+      end
+    end
+    context "When potential winner is player2" do
+      it "sets @potential_winner to player2" do
+        saved_winner = 'player2'
+        chess_game.load_potential_winner(saved_winner)
+        expect(chess_game.potential_winner).to eq(chess_game.p2)
+      end
+    end
+  end
+
+  describe "#load_pawn" do
+    context "When called" do
+      it "returns a pawn" do
+        info = ['Pawn', 'black', 'false']
+        result = chess_game.load_pawn(info)
+        expect(result).to be_kind_of(Pawn)
+      end
+    end
+    context "When saved info indicates that pawn has made its first move" do
+      it "calls #first_move_check on pawn" do
+        #This method changes first_move to false.
+        info = ['Pawn', 'black', 'false']
+        pawn_piece = chess_game.load_pawn(info)
+        expect(pawn_piece.first_move).to eq(false)
+      end
+    end
+    context "When saved info indicates that pawn has not made its first move" do
+      it "doesn't call #first_move_check on pawn" do
+        info = ['Pawn', 'white', 'true']
+        pawn_piece = chess_game.load_pawn(info)
+        expect(pawn_piece.first_move).to eq(true)
       end
     end
   end
